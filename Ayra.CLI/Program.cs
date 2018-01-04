@@ -1,4 +1,5 @@
 ﻿using Ayra.Core;
+using Ayra.Core.Enums;
 using Ayra.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,10 @@ namespace Ayra.CLI
 
             TitleKeyDatabaseEntry selectedGame = CLI_SelectGame(keys);
 
+            NUSClient client = new NUSClient(NDevice.WII_U);
+
             Console.WriteLine("Downloading metadata...");
-            TitleMetaData tmd = await NUSClient.DownloadTitleMetadata(selectedGame);
+            TitleMetaData tmd = await client.DownloadTitleMetadata(selectedGame);
 
             //if (!selectedGame.HasTicket)
             //{
@@ -32,7 +35,6 @@ namespace Ayra.CLI
 
             //byte[] ticket = await selectedGame.DownloadTicket("http://wiiu.titlekeys.gq/");
 
-            Exit:
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }

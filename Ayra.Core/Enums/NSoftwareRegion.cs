@@ -1,4 +1,4 @@
-﻿namespace Ayra.Core.Models
+﻿namespace Ayra.Core.Enums
 {
     public enum NSoftwareRegion
     {

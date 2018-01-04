@@ -1,6 +1,7 @@
 ﻿using Ayra.Core.Extensions;
 using System;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Ayra.Core.Models
 {
@@ -56,13 +57,23 @@ namespace Ayra.Core.Models
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public unsafe struct TMD_ContentRecord
+    public struct TMD_ContentRecord
     {
+        [Endian(Endianness.BigEndian)]
         public UInt32 ContentId;
+
+        [Endian(Endianness.BigEndian)]
         public UInt16 Index;
+
+        [DebuggerDisplay("{Type,h}")]
+        [Endian(Endianness.BigEndian)]
         public UInt16 Type;
+
+        [Endian(Endianness.BigEndian)]
         public UInt64 Size;
-        public fixed byte Hash[20];
+       
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20, ArraySubType = UnmanagedType.U1)]
+        public byte[] Hash;
     }
 
     public class TitleMetaData
@@ -74,6 +85,16 @@ namespace Ayra.Core.Models
         {
             TitleMetaData tmd = new TitleMetaData();
             tmd.Header = data.ToStruct<TMD_Header>();
+            tmd.Contents = new TMD_ContentRecord[tmd.Header.NumContents];
+
+            for (int i = 0; i < tmd.Header.NumContents; i++)
+            {
+                int offset = 0x30 * i;
+                byte[] contentData = new byte[0x24];
+                Array.Copy(data, 0xB04 + offset, contentData, 0, 0x24);
+                TMD_ContentRecord contentRecord = contentData.ToStruct<TMD_ContentRecord>();
+                tmd.Contents[i] = contentRecord;
+            }
 
             return tmd;
         }

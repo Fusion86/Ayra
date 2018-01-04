@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Ayra.Core.Enums;
 
 namespace Ayra.Core.Models
 {
