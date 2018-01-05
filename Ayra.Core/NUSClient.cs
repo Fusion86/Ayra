@@ -1,6 +1,7 @@
 ﻿using Ayra.Core.Enums;
 using Ayra.Core.Models;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Ayra.Core
@@ -79,7 +80,21 @@ namespace Ayra.Core
         /// <param name="titleId"></param>
         public async void DownloadTitle(string titleId, string path)
         {
+            TMD tmd = await DownloadTMD(titleId);
+            DownloadTitle(tmd, path);
+        }
 
+        /// <summary>
+        /// Download title to path
+        /// </summary>
+        /// <param name="tmd"></param>
+        /// <param name="path"></param>
+        public async void DownloadTitle(TMD tmd, string path)
+        {
+            for (int i = 0; i < tmd.Header.NumContents; i++)
+            {
+                Debug.WriteLine($"[DownloadTitle] Downloading {i+1}/{tmd.Header.NumContents} {}");
+            }
         }
     }
 }

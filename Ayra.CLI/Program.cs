@@ -45,8 +45,10 @@ namespace Ayra.CLI
 
         static async Task Main(string[] args)
         {
-            byte[] data = File.ReadAllBytes("cetk");
-            Ticket ticket = Ticket.Load(data);
+            NUSClient client = new NUSClient(NDevice.WII_U);
+            TMD tmd = await client.DownloadTMD("0005000c101c9500");
+
+            client.DownloadTitle(tmd, "download");
         }
 
         #region CLI Methods
