@@ -1,14 +1,23 @@
 ﻿using Ayra.Core.Converters;
+using Ayra.Core.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Ayra.Core.Enums;
 
-namespace Ayra.Core.Models
+namespace Ayra.TitleKeyDatabase.Wii_U
 {
-    public class TitleKeyDatabaseEntry : Title
+    /// <summary>
+    /// Only useful when using a website based on TomEke/WiiU-Title-Key
+    /// </summary>
+    public class TitleKeyDatabaseEntry
     {
+        [JsonProperty("titleID")]
+        public string Id { get; set; }
+
+        [JsonProperty("titleKey")]
+        public string Key { get; set; }
+
         [JsonProperty("name")]
         public string Name { get; set; }
 

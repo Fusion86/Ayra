@@ -24,10 +24,13 @@ namespace Ayra.Core.Models
         public static NSoftwareType DLC = new NSoftwareType(new[] { "0005000C" }, "DLC");
         public static NSoftwareType Unknown = new NSoftwareType(null, "Unknown");
 
-        public static NSoftwareType GetByHeader(string header)
+        public static NSoftwareType GetById(string id)
         {
             IEnumerable<NSoftwareType> types = typeof(NSoftwareTypes).GetFields().Select(x => (NSoftwareType)x.GetValue(null)); // TODO: Maybe make compile time const, if possible
-            NSoftwareType type = types.First(x => x.Headers.Contains(header.ToUpper()));
+
+            if (id.Length > 8) id = id.Substring(0, 8);
+            NSoftwareType type = types.First(x => x.Headers.Contains(id.ToUpper()));
+
             return type ?? Unknown;
         }
     }

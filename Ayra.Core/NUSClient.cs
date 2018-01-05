@@ -1,18 +1,14 @@
 ﻿using Ayra.Core.Enums;
 using Ayra.Core.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Ayra.Core
 {
     public class NUSClient : IDisposable
     {
-        private const string WII_NUS_URL = "http://ccs.cdn.wup.shop.nintendo.net/ccs/download/";
-        private const string WII_USER_AGENT = "wii libnup/1.0";
+        private const string WIIU_NUS_URL = "http://ccs.cdn.wup.shop.nintendo.net/ccs/download/";
+        private const string WIIU_USER_AGENT = "wii libnup/1.0";
 
         private readonly string nusBaseUrl;
         private readonly NUSWebClient webClient;
@@ -28,8 +24,8 @@ namespace Ayra.Core
                     throw new NotImplementedException();
 
                 case NDevice.WII_U:
-                    nusBaseUrl = WII_NUS_URL;
-                    webClient = new NUSWebClient(WII_USER_AGENT);
+                    nusBaseUrl = WIIU_NUS_URL;
+                    webClient = new NUSWebClient(WIIU_USER_AGENT);
                     break;
             }
         }
@@ -55,15 +51,35 @@ namespace Ayra.Core
         #endregion
 
         /// <summary>
-        /// Download TMD
+        /// Download TitleMetaData
         /// </summary>
-        /// <param name="title">Title to download the metadata for</param>
-        /// <returns>TMD byte array</returns>
-        public async Task<TMD> DownloadTitleMetadata(Title title)
+        /// <param name="titleId">Title to download the metadata for</param>
+        /// <returns></returns>
+        public async Task<TMD> DownloadTMD(string titleId)
         {
-            string url = nusBaseUrl + title.Id + "/tmd";
-            byte[] data = await new WebClient().DownloadDataTaskAsync(new Uri(url));
+            string url = nusBaseUrl + titleId + "/tmd";
+            byte[] data = await webClient.DownloadDataTaskAsync(new Uri(url));
             return TMD.Load(data);
+        }
+
+        /// <summary>
+        /// Download Common E-Ticket
+        /// </summary>
+        /// <param name="titleId"></param>
+        /// <returns></returns>
+        public async Task<object> DownloadCetk(string titleId)
+        {
+            string url = nusBaseUrl + titleId + "/cetk";
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Download title to path
+        /// </summary>
+        /// <param name="titleId"></param>
+        public async void DownloadTitle(string titleId, string path)
+        {
+
         }
     }
 }
