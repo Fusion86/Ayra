@@ -17,7 +17,7 @@ namespace Ayra.CLI
             Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntry)).GetName().Version}\n");
 
             Console.WriteLine("Downloading Title Keys...");
-            List<TitleKeyDatabaseEntry> keys = TitleKeyDatabase.GetTitleKeyDatabaseEntries("http://wiiu.titlekeys.gq/");
+            List<TitleKeyDatabaseEntry> keys = TitleKeyDatabase.GetAllEntries("http://wiiu.titlekeys.gq/");
             Console.WriteLine($"Downloaded {keys.Count} Title Keys\n");
 
             TitleKeyDatabaseEntry selectedGame = CLI_SelectGame(keys);
@@ -25,7 +25,7 @@ namespace Ayra.CLI
             NUSClient client = new NUSClient(NDevice.WII_U);
 
             Console.WriteLine("Downloading metadata...");
-            TitleMetaData tmd = await client.DownloadTitleMetadata(selectedGame);
+            TMD tmd = await client.DownloadTitleMetadata(selectedGame);
 
             //if (!selectedGame.HasTicket)
             //{

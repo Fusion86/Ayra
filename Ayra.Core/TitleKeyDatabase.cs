@@ -12,9 +12,8 @@ namespace Ayra.Core
         /// </summary>
         /// <param name="url">Website url</param>
         /// <returns></returns>
-        public static List<TitleKeyDatabaseEntry> GetTitleKeyDatabaseEntries(string url)
+        public static List<TitleKeyDatabaseEntry> GetAllEntries(string url)
         {
-            if (url.EndsWith("/")) url.TrimEnd('/');
             string json = new WebClient().DownloadString(url + "/json");
             List<TitleKeyDatabaseEntry> keys = JsonConvert.DeserializeObject<List<TitleKeyDatabaseEntry>>(json);
             return keys;

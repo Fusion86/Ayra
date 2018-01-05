@@ -59,11 +59,11 @@ namespace Ayra.Core
         /// </summary>
         /// <param name="title">Title to download the metadata for</param>
         /// <returns>TMD byte array</returns>
-        public async Task<TitleMetaData> DownloadTitleMetadata(Title title)
+        public async Task<TMD> DownloadTitleMetadata(Title title)
         {
             string url = nusBaseUrl + title.Id + "/tmd";
             byte[] data = await new WebClient().DownloadDataTaskAsync(new Uri(url));
-            return TitleMetaData.Load(data);
+            return TMD.Load(data);
         }
     }
 }

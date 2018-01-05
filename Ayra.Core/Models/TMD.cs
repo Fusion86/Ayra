@@ -76,14 +76,14 @@ namespace Ayra.Core.Models
         public byte[] Hash;
     }
 
-    public class TitleMetaData
+    public class TMD
     {
         public TMD_Header Header;
         public TMD_ContentRecord[] Contents; // Count = Header.NumContents
 
-        public static TitleMetaData Load(byte[] data)
+        public static TMD Load(byte[] data)
         {
-            TitleMetaData tmd = new TitleMetaData();
+            TMD tmd = new TMD();
             tmd.Header = data.ToStruct<TMD_Header>();
             tmd.Contents = new TMD_ContentRecord[tmd.Header.NumContents];
 
