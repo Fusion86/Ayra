@@ -1,18 +1,52 @@
 ﻿using Ayra.Core.Models;
+using Ayra.Core.Extensions;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
 
 namespace Ayra.Core
 {
     public static class CDecrypt
     {
-        public static void DecryptContents(TMD tmd, string titleKey, string path)
+        public static void DecryptContents(TMD tmd, byte[] encTitleKey, string path)
         {
-            Debug.WriteLine("[DecryptContents] Title version: " + tmd.Header.TitleVersion);
+            if (encTitleKey.Length != 16) throw new Exception("Encrypted title key has to be 16 bytes!");
+
             Debug.WriteLine("[DecryptContents] TMD version: " + tmd.Header.Version);
+            if (tmd.Header.Version != 1) throw new NotSupportedException();
+
+            Debug.WriteLine("[DecryptContents] Title version: " + tmd.Header.TitleVersion);
             Debug.WriteLine("[DecryptContents] Content count: " + tmd.Header.NumContents);
 
-            if (tmd.Header.Version != 1) throw new NotSupportedException();
+            AesManaged aes = new AesManaged();
+            aes.Mode = CipherMode.CBC;
+
+            switch (tmd.Header.Issuer)
+            {
+                case "Root-CA00000003-CP0000000b":
+                    aes.Key = KeyChain.WIIU_COMMON_KEY;
+                    break;
+                case "Root-CA00000004-CP00000010":
+                    aes.Key = KeyChain.WIIU_COMMON_DEV_KEY;
+                    break;
+                default: throw new NotSupportedException("Unknown Root type: " + tmd.Header.Issuer);
+            }
+            
+            byte[] decTitleKey = new byte[16];
+
+            // First 8 bytes are titleId and the last 8 bytes are 0x00
+            byte[] iv = BitConverter.GetBytes(tmd.Header.TitleId);
+            if (BitConverter.IsLittleEndian) Array.Reverse(iv);
+            Array.Resize(ref iv, 16); // New space will have 0x00 as value
+
+            aes.IV = iv;
+
+            using (MemoryStream ms = new MemoryStream(encTitleKey))
+            using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read))
+            {
+                cs.Read(decTitleKey, 0, decTitleKey.Length);
+            }
         }
     }
 }

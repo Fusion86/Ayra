@@ -12,17 +12,9 @@ namespace Ayra.TitleKeyDatabase.Wii_U
     /// </summary>
     public class TitleKeyDatabase
     {
-        private static readonly Lazy<TitleKeyDatabase> lazy = new Lazy<TitleKeyDatabase>(() => new TitleKeyDatabase());
-        public static TitleKeyDatabase Instance => lazy.Value;
-
         private List<TitleKeyDatabaseEntry> entries = new List<TitleKeyDatabaseEntry>();
         public IReadOnlyList<TitleKeyDatabaseEntry> Entries => entries.AsReadOnly();
         
-        private TitleKeyDatabase()
-        {
-
-        }
-
         private List<TitleKeyDatabaseEntry> ParseJson(string json) => JsonConvert.DeserializeObject<List<TitleKeyDatabaseEntry>>(json);
         
         /// <summary>
