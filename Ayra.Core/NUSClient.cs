@@ -17,6 +17,8 @@ namespace Ayra.Core
         private readonly string nusBaseUrl;
         private readonly NUSWebClient webClient;
 
+        public DownloadProgressChangedEventHandler DownloadProgressChangedEventHandler;
+
         public NUSClient(NDevice device)
         {
             switch (device)
@@ -38,6 +40,7 @@ namespace Ayra.Core
 
         private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
+            DownloadProgressChangedEventHandler?.Invoke(sender, e);
             Debug.WriteLine($"Download progress: {e.ProgressPercentage}% - {Utility.GetSizeString(e.BytesReceived)}/{Utility.GetSizeString(e.TotalBytesToReceive)}");
         }
 

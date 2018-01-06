@@ -45,10 +45,12 @@ namespace Ayra.CLI
 
         static async Task Main(string[] args)
         {
-            NUSClient client = new NUSClient(NDevice.WII_U);
-            TMD tmd = await client.DownloadTMD("0005000c101c9500");
+            TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = TitleKeyDatabase.Wii_U.TitleKeyDatabase.Instance;
+            titleKeyDatabase.UpdateDatabase("http://wiiu.titlekeys.gq/");
+            TitleKeyDatabaseEntry game = titleKeyDatabase.Entries.First(x => x.Id == "0005000010108300");
+            TMD tmd = await new NUSClient(NDevice.WII_U).DownloadTMD("0005000010108300");
 
-            await client.DownloadTitle(tmd, "download");
+            CDecrypt.DecryptContents(tmd, "b669ac941b2eb8950b0169dc9dd0dfa3", "download");
         }
 
         #region CLI Methods
