@@ -48,7 +48,7 @@ namespace Ayra.CLI
             NUSClient client = new NUSClient(NDevice.WII_U);
             TMD tmd = await client.DownloadTMD("0005000c101c9500");
 
-            client.DownloadTitle(tmd, "download");
+            await client.DownloadTitle(tmd, "download");
         }
 
         #region CLI Methods
