@@ -19,7 +19,11 @@ namespace Ayra.Core
             Debug.WriteLine("[DecryptContents] Title version: " + tmd.Header.TitleVersion);
             Debug.WriteLine("[DecryptContents] Content count: " + tmd.Header.NumContents);
 
-            AesManaged aes = new AesManaged();
+            //
+            // AES setup
+            //
+
+            Aes aes = Aes.Create();
             aes.Mode = CipherMode.CBC;
 
             switch (tmd.Header.Issuer)
@@ -32,6 +36,10 @@ namespace Ayra.Core
                     break;
                 default: throw new NotSupportedException("Unknown Root type: " + tmd.Header.Issuer);
             }
+
+            //
+            // Decrypt title key
+            //
             
             byte[] decTitleKey = new byte[16];
 
@@ -43,10 +51,14 @@ namespace Ayra.Core
             aes.IV = iv;
 
             using (MemoryStream ms = new MemoryStream(encTitleKey))
-            using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read))
+            using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
             {
                 cs.Read(decTitleKey, 0, decTitleKey.Length);
             }
+
+            //
+            // Stuff
+            //
         }
     }
 }

@@ -91,7 +91,7 @@ namespace Ayra.Core
         /// Download title to path
         /// </summary>
         /// <param name="titleId"></param>
-        public async void DownloadTitle(string titleId, string path)
+        public async Task DownloadTitle(string titleId, string path)
         {
             Debug.WriteLine($"[DownloadTitle] Downloading TMD for TitleID {titleId}");
             TMD tmd = await DownloadTMD(titleId);
