@@ -7,14 +7,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using Ayra.Core.Data;
+using System.Diagnostics.Contracts;
 
 namespace Ayra.Core.Helpers
 {
     public static class CDecrypt
     {
-        public static void DecryptContents(TMD tmd, byte[] encTitleKey, string path)
+        public static void DecryptContents(TMD tmd, byte[] encryptedTitleKey, string path)
         {
-            if (encTitleKey.Length != 16) throw new Exception("Encrypted title key has to be 16 bytes!");
+            Contract.Requires(encryptedTitleKey.Length == 16, "Encrypted title key has to be 16 bytes!");
 
             Debug.WriteLine("[DecryptContents] TMD version: " + tmd.Header.Version);
             if (tmd.Header.Version != 1) throw new NotSupportedException();
@@ -45,7 +46,7 @@ namespace Ayra.Core.Helpers
             // Decrypt title key
             //
             
-            byte[] decTitleKey = new byte[16];
+            byte[] decrypteTitleKey = new byte[16];
 
             // First 8 bytes are titleId and the last 8 bytes are 0x00
             byte[] iv = BitConverter.GetBytes(tmd.Header.TitleId);
@@ -54,19 +55,34 @@ namespace Ayra.Core.Helpers
 
             aes.IV = iv;
 
-            using (MemoryStream ms = new MemoryStream(encTitleKey))
+            using (MemoryStream ms = new MemoryStream(encryptedTitleKey))
             using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
             {
-                cs.Read(decTitleKey, 0, decTitleKey.Length);
+                cs.Read(decrypteTitleKey, 0, decrypteTitleKey.Length);
             }
 
             //
-            // Stuff
+            // Read Contents[0]
             //
 
+            string cntName = tmd.Contents[0].ContentId.ToString("X08");
+            byte[] encryptedContent = File.ReadAllBytes(Path.Combine(path, cntName));
+            byte[] decryptedContent = new byte[encryptedContent.Length];
+
+            if ((int)tmd.Contents[0].Size != encryptedContent.Length) throw new Exception("Size of Contents[0] is wrong!");
+
+            aes.Key = decrypteTitleKey;
             aes.IV = new byte[16]; // 0x00 * 16
 
-            string appName = tmd.Contents[0].ContentId.ToString("X08") + ".app";
+            // FIXME: Decryption is most broken
+
+            using (MemoryStream ms = new MemoryStream(encryptedContent))
+            using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
+            {
+                cs.Read(decryptedContent, 0, encryptedContent.Length);
+            }
+
+            File.WriteAllBytes("dmp", decryptedContent);
         }
     }
 }

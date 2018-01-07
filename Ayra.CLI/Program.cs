@@ -1,6 +1,7 @@
 ﻿using Ayra.Core;
 using Ayra.Core.Classes;
 using Ayra.Core.Enums;
+using Ayra.Core.Helpers;
 using Ayra.Core.Models;
 using Ayra.Core.Extensions;
 using Ayra.TitleKeyDatabase.Wii_U;
@@ -47,13 +48,11 @@ namespace Ayra.CLI
 
         static async Task Main(string[] args)
         {
-            //TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.Wii_U.TitleKeyDatabase();
-            //titleKeyDatabase.UpdateDatabase("http://wiiu.titlekeys.gq/");
-            //TitleKeyDatabaseEntry game = titleKeyDatabase.Entries.First(x => x.Id == "0005000010108300");
-            //await new NUSClient(NDevice.WII_U).DownloadTitle("0005000e101a9f00", "download");
-            TMD tmd = await new NUSClient(NDevice.WII_U).DownloadTMD("0005000e101a9f00");
-
-            //CDecrypt.DecryptContents(tmd, "b669ac941b2eb8950b0169dc9dd0dfa3".ToByteArray(), "download");
+            NUSClient client = new NUSClient(NDevice.WII_U);
+            TMD tmd = await client.DownloadTMD("0005000e101a9f00");
+            string gameLocation = tmd.Header.TitleId.ToString("X8");
+            //await client.DownloadTitle(tmd, gameLocation);
+            CDecrypt.DecryptContents(tmd, "b669ac941b2eb8950b0169dc9dd0dfa3".ToByteArray(), gameLocation);
         }
 
         #region CLI Methods
