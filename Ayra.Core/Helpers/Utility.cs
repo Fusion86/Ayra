@@ -1,5 +1,4 @@
-﻿using System;
-namespace Ayra.Core
+﻿namespace Ayra.Core.Helpers
 {
     public static class Utility
     {

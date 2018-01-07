@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Ayra.Core
+namespace Ayra.Core.Helpers
 {
     public enum Endianness
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ayra.Core
+namespace Ayra.Core.Data
 {
     public static class KeyChain
     {

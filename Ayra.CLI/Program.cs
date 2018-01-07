@@ -1,4 +1,5 @@
 ﻿using Ayra.Core;
+using Ayra.Core.Classes;
 using Ayra.Core.Enums;
 using Ayra.Core.Models;
 using Ayra.Core.Extensions;
@@ -49,9 +50,10 @@ namespace Ayra.CLI
             //TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.Wii_U.TitleKeyDatabase();
             //titleKeyDatabase.UpdateDatabase("http://wiiu.titlekeys.gq/");
             //TitleKeyDatabaseEntry game = titleKeyDatabase.Entries.First(x => x.Id == "0005000010108300");
-            TMD tmd = await new NUSClient(NDevice.WII_U).DownloadTMD("0005000010108300");
+            //await new NUSClient(NDevice.WII_U).DownloadTitle("0005000e101a9f00", "download");
+            TMD tmd = await new NUSClient(NDevice.WII_U).DownloadTMD("0005000e101a9f00");
 
-            CDecrypt.DecryptContents(tmd, "b669ac941b2eb8950b0169dc9dd0dfa3".ToByteArray(), "download");
+            //CDecrypt.DecryptContents(tmd, "b669ac941b2eb8950b0169dc9dd0dfa3".ToByteArray(), "download");
         }
 
         #region CLI Methods

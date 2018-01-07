@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Net;
 
-namespace Ayra.Core
+namespace Ayra.Core.Classes
 {
     public class NUSWebClient : WebClient
     {
-        private readonly string _userAgent;
-
-        public NUSWebClient(string userAgent)
-        {
-            _userAgent = userAgent;
-        }
+        public string UserAgent = "";
 
         protected override WebRequest GetWebRequest(Uri address)
         {
             var request = base.GetWebRequest(address) as HttpWebRequest;
-            request.UserAgent = _userAgent;
+            request.UserAgent = UserAgent;
 
             return request;
         }

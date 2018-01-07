@@ -1,10 +1,13 @@
 ﻿using Ayra.Core.Extensions;
+using Ayra.Core.Helpers;
 using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 namespace Ayra.Core.Models
 {
+    // See http://wiiubrew.org/wiki/Title_metadata
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TMD_Header
     {

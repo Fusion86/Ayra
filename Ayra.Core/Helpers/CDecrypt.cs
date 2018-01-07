@@ -1,11 +1,14 @@
-﻿using Ayra.Core.Models;
+﻿// Based on https://github.com/crediar/cdecrypt/blob/master/main.cpp
+
+using Ayra.Core.Models;
 using Ayra.Core.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using Ayra.Core.Data;
 
-namespace Ayra.Core
+namespace Ayra.Core.Helpers
 {
     public static class CDecrypt
     {
@@ -60,6 +63,10 @@ namespace Ayra.Core
             //
             // Stuff
             //
+
+            aes.IV = new byte[16]; // 0x00 * 16
+
+            string appName = tmd.Contents[0].ContentId.ToString("X08") + ".app";
         }
     }
 }
