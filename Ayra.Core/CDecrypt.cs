@@ -25,6 +25,7 @@ namespace Ayra.Core
 
             Aes aes = Aes.Create();
             aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.None;
 
             switch (tmd.Header.Issuer)
             {
