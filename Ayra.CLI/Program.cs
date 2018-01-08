@@ -51,8 +51,11 @@ namespace Ayra.CLI
             NUSClient client = new NUSClient(NDevice.WII_U);
             TMD tmd = await client.DownloadTMD("0005000e101a9f00");
             string gameLocation = tmd.Header.TitleId.ToString("X8");
+
             //await client.DownloadTitle(tmd, gameLocation);
-            CDecrypt.DecryptContents(tmd, "b669ac941b2eb8950b0169dc9dd0dfa3".ToByteArray(), gameLocation);
+            Ticket ticket = Ticket.Load(File.ReadAllBytes(Path.Combine(gameLocation, "cetk")));
+
+            CDecrypt.DecryptContents(tmd, ticket, gameLocation);
         }
 
         #region CLI Methods
