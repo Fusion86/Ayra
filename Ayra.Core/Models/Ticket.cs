@@ -93,16 +93,6 @@ namespace Ayra.Core.Models
             Tickets = entries.ToArray();
         }
 
-        /// <summary>
-        /// Get the decrypted title key
-        /// </summary>
-        /// <param name="commonKey">Common key</param>
-        /// <returns></returns>
-        public byte[] GetTitleKey(byte[] commonKey)
-        {
-            throw new NotImplementedException();
-        }
-
         public static Ticket Load(byte[] data)
         {
             // Size:
@@ -126,14 +116,14 @@ namespace Ayra.Core.Models
             //    TicketEntry entry = new TicketEntry();
 
             //    byte[] headerData = new byte[0x264];
-            //    Array.Copy(data, baseOffset, headerData, 0, 0x264);
+            //    Buffer.BlockCopy(data, baseOffset, headerData, 0, 0x264);
             //    entry.Header = headerData.ToStruct<TicketEntry_Header>();
             //    entry.TimeLimit = new TicketEntry_TimeLimit[8]; // Always 8
 
             //    for (int i = 0; i < 8; i++)
             //    {
             //        byte[] timeLimit = new byte[0x40];
-            //        Array.Copy(data, baseOffset + 0x264 + i * 8, timeLimit, 0, 8);
+            //        Buffer.BlockCopy(data, baseOffset + 0x264 + i * 8, timeLimit, 0, 8);
             //        entry.TimeLimit[i] = timeLimit.ToStruct<TicketEntry_TimeLimit>();
             //    }
 
@@ -146,14 +136,14 @@ namespace Ayra.Core.Models
 
             TicketEntry entry = new TicketEntry();
             byte[] headerData = new byte[0x264];
-            Array.Copy(data, 0, headerData, 0, 0x264);
+            Buffer.BlockCopy(data, 0, headerData, 0, 0x264);
             entry.Header = headerData.ToStruct<TicketEntry_Header>();
             entry.TimeLimit = new TicketEntry_TimeLimit[8]; // Always 8
 
             for (int i = 0; i < 8; i++)
             {
                 byte[] timeLimit = new byte[0x40];
-                Array.Copy(data, 0x264 + i * 8, timeLimit, 0, 8);
+                Buffer.BlockCopy(data, 0x264 + i * 8, timeLimit, 0, 8);
                 entry.TimeLimit[i] = timeLimit.ToStruct<TicketEntry_TimeLimit>();
             }
             entries.Add(entry);
