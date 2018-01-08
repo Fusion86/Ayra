@@ -13,10 +13,8 @@ namespace Ayra.Core.Helpers
 {
     public static class CDecrypt
     {
-        public static void DecryptContents(TMD tmd, byte[] encryptedTitleKey, string path)
+        public static void DecryptContents(TMD tmd, Ticket ticket, string path)
         {
-            Contract.Requires(encryptedTitleKey.Length == 16, "Encrypted title key has to be 16 bytes!");
-
             Debug.WriteLine("[DecryptContents] TMD version: " + tmd.Header.Version);
             if (tmd.Header.Version != 1) throw new NotSupportedException();
 
@@ -45,8 +43,9 @@ namespace Ayra.Core.Helpers
             //
             // Decrypt title key
             //
-            
-            byte[] decrypteTitleKey = new byte[16];
+
+            byte[] encryptedTitleKey = ticket.Tickets[0].Header.EncryptedTitleKey;
+            byte[] decryptedTitleKey = new byte[16];
 
             // First 8 bytes are titleId and the last 8 bytes are 0x00
             byte[] iv = BitConverter.GetBytes(tmd.Header.TitleId);
@@ -58,7 +57,7 @@ namespace Ayra.Core.Helpers
             using (MemoryStream ms = new MemoryStream(encryptedTitleKey))
             using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
             {
-                cs.Read(decrypteTitleKey, 0, decrypteTitleKey.Length);
+                cs.Read(decryptedTitleKey, 0, decryptedTitleKey.Length);
             }
 
             //
@@ -71,10 +70,8 @@ namespace Ayra.Core.Helpers
 
             if ((int)tmd.Contents[0].Size != encryptedContent.Length) throw new Exception("Size of Contents[0] is wrong!");
 
-            aes.Key = decrypteTitleKey;
+            aes.Key = decryptedTitleKey;
             aes.IV = new byte[16]; // 0x00 * 16
-
-            // FIXME: Decryption is most broken
 
             using (MemoryStream ms = new MemoryStream(encryptedContent))
             using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(aes.Key, aes.IV), CryptoStreamMode.Read))
@@ -82,7 +79,9 @@ namespace Ayra.Core.Helpers
                 cs.Read(decryptedContent, 0, encryptedContent.Length);
             }
 
-            File.WriteAllBytes("dmp", decryptedContent);
+            if (Debugger.IsAttached) File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
+
+            //if ((int)decryptedContent != 0x46535400) throw new Exception();
         }
     }
 }
