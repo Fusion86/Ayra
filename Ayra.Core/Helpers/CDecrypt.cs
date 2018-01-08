@@ -78,10 +78,10 @@ namespace Ayra.Core.Helpers
             {
                 cs.Read(decryptedContent, 0, encryptedContent.Length);
             }
+            
+            //if (Debugger.IsAttached) File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
 
-            if (Debugger.IsAttached) File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
-
-            //if ((int)decryptedContent != 0x46535400) throw new Exception();
+            FST fst = FST.Load(decryptedContent);
         }
     }
 }

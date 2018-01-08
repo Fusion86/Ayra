@@ -94,7 +94,7 @@ namespace Ayra.Core.Models
             {
                 int offset = 0x30 * i;
                 byte[] contentData = new byte[0x24];
-                Buffer.BlockCopy(data, 0xB04 + offset, contentData, 0, 0x24); // 0xB04 = sizeof(TMD_Header)
+                Buffer.BlockCopy(data, 0xB04 + offset, contentData, 0, contentData.Length); // 0xB04 = sizeof(TMD_Header)
                 TMD_ContentRecord contentRecord = contentData.ToStruct<TMD_ContentRecord>();
                 tmd.Contents[i] = contentRecord;
             }

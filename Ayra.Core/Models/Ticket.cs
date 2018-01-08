@@ -142,7 +142,7 @@ namespace Ayra.Core.Models
 
             for (int i = 0; i < 8; i++)
             {
-                byte[] timeLimit = new byte[0x40];
+                byte[] timeLimit = new byte[0x8];
                 Buffer.BlockCopy(data, 0x264 + i * 8, timeLimit, 0, 8);
                 entry.TimeLimit[i] = timeLimit.ToStruct<TicketEntry_TimeLimit>();
             }
