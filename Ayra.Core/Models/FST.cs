@@ -12,7 +12,7 @@ namespace Ayra.Core.Models
         public UInt32 SecondaryHeaderSize => native.SecondaryHeaderSize;
         public UInt32 SecondaryHeaderCount => native.SecondaryHeaderCount;
 
-        public static FST_Header Load(byte[] data)
+        public static FST_Header Load(ref byte[] data)
         {
             return new FST_Header
             {
@@ -25,7 +25,7 @@ namespace Ayra.Core.Models
     {
         private _FST_SecondaryHeader native;
 
-        public static FST_SecondaryHeader Load(in byte[] data)
+        public static FST_SecondaryHeader Load(ref byte[] data)
         {
             return new FST_SecondaryHeader
             {
@@ -50,7 +50,7 @@ namespace Ayra.Core.Models
             }
         }
 
-        public static FST_FDInfoBase Load(in byte[] data)
+        public static FST_FDInfoBase Load(ref byte[] data)
         {
             FST_FDInfoBase info = new FST_FDInfoBase { native = data.ToStruct<_FST_FDInfo>() };
             if (info.IsDirectory) return new FST_DirectoryInfo { native = info.native };
@@ -76,12 +76,12 @@ namespace Ayra.Core.Models
         public FST_Header Header;
         public FST_SecondaryHeader[] SecondaryHeaders;
         public FST_FDInfoBase[] Entries;
-        public string[] FilePaths; // Or directory
+        public string[] FilePaths; // Or directory path
 
-        public static FST Load(in byte[] data)
+        public static FST Load(ref byte[] data)
         {
             FST fst = new FST();
-            fst.Header = FST_Header.Load(data);
+            fst.Header = FST_Header.Load(ref data);
             fst.SecondaryHeaders = new FST_SecondaryHeader[fst.Header.SecondaryHeaderCount];
 
             // 0x20 = sizeof(FST_Header)  and  sizeof(FST_SecondaryHeader)
@@ -92,14 +92,14 @@ namespace Ayra.Core.Models
             {
                 byte[] secondaryHeaderData = new byte[0x20];
                 Buffer.BlockCopy(data, offset, secondaryHeaderData, 0, secondaryHeaderData.Length);
-                fst.SecondaryHeaders[i] = FST_SecondaryHeader.Load(secondaryHeaderData);
+                fst.SecondaryHeaders[i] = FST_SecondaryHeader.Load(ref secondaryHeaderData);
                 offset += 0x20;
             }
 
             // Read root
             byte[] rootData = new byte[0x10];
             Buffer.BlockCopy(data, offset, rootData, 0, rootData.Length);
-            FST_DirectoryInfo rootEntry = FST_FDInfoBase.Load(rootData) as FST_DirectoryInfo;
+            FST_DirectoryInfo rootEntry = FST_FDInfoBase.Load(ref rootData) as FST_DirectoryInfo;
 
             Debug.WriteLine($"[FST] Found {rootEntry.FileCount} files/directories");
 
@@ -109,7 +109,7 @@ namespace Ayra.Core.Models
             {
                 byte[] entryData = new byte[0x10]; // NOTE: Look carefully ++i instead of i++
                 Buffer.BlockCopy(data, offset + i * 0x10, entryData, 0, entryData.Length);
-                fst.Entries[i] = FST_FDInfoBase.Load(entryData);
+                fst.Entries[i] = FST_FDInfoBase.Load(ref entryData);
             }
 
             // fst.Entries[0] == rootEntry, so they are the same (not just the same data, but same address)
@@ -125,22 +125,19 @@ namespace Ayra.Core.Models
             int level = 0; // Max is 15 (aka 16 states)
             string[] fileNames = new string[rootEntry.FileCount];
             fst.FilePaths = new string[rootEntry.FileCount];
+
             for (int i = 1; i < rootEntry.FileCount; ++i)
             {
-                while (level > 0 && lentry[level - 1] == i)
+                while (level > 0 && lentry[level - 1] == i) level--;
+
+                char[] szName = new char[0xFF];
+                for (int j = 0; j < szName.Length; j++)
                 {
-                    // Debug.WriteLine("[FST] Going up a level");
-                    level--;
+                    szName[j] = (char)data[nameTableOffset + fst.Entries[i].NameOffset + j];
+                    if (szName[j] == 0x00) break; // We are reading zero terminated strings, so break if we find the string terminator (0x00)
                 }
 
-                char[] chars = new char[0xFF];
-                for (int j = 0; j < chars.Length; j++)
-                {
-                    chars[j] = (char)data[nameTableOffset + fst.Entries[i].NameOffset + j];
-                    if (chars[j] == 0x00) break;
-                }
-
-                fileNames[i] = new string(chars).Split('\0')[0]; // Split to remove zero terminators from string
+                fileNames[i] = new string(szName).Split('\0')[0]; // Split to remove zero terminators from string
 
                 if (fst.Entries[i].IsDirectory)
                 {
@@ -154,8 +151,7 @@ namespace Ayra.Core.Models
 
                     // Debug.WriteLine($"[FST] Found directory '{fileNames[i]}' at level {level}");
                 }
-                // else
-                // {
+
                 string path = "";
                 for (int j = 0; j < level; j++)
                 {
@@ -168,7 +164,6 @@ namespace Ayra.Core.Models
 
                 string type = fst.Entries[i].IsDirectory ? "directory" : "file";
                 Debug.WriteLine($"[FST] Found {type} '{path}'");
-                // }
             }
             #endregion
 

@@ -53,7 +53,8 @@ namespace Ayra.CLI
             string gameLocation = tmd.Header.TitleId.ToString("X8");
 
             //await client.DownloadTitle(tmd, gameLocation);
-            Ticket ticket = Ticket.Load(File.ReadAllBytes(Path.Combine(gameLocation, "cetk")));
+            byte[] ticketData = File.ReadAllBytes(Path.Combine(gameLocation, "cetk"));
+            Ticket ticket = Ticket.Load(ref ticketData);
 
             CDecrypt.DecryptContents(tmd, ticket, gameLocation);
         }

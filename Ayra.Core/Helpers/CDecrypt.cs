@@ -78,10 +78,10 @@ namespace Ayra.Core.Helpers
             {
                 cs.Read(decryptedContent, 0, encryptedContent.Length);
             }
-            
+
             //if (Debugger.IsAttached) File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
 
-            FST fst = FST.Load(decryptedContent);
+            FST fst = FST.Load(ref decryptedContent);
             int num = fst.Entries[0].NameOffset;
         }
     }

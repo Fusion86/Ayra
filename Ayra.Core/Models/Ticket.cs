@@ -14,7 +14,7 @@ namespace Ayra.Core.Models
             Tickets = entries.ToArray();
         }
 
-        public static Ticket Load(in byte[] data)
+        public static Ticket Load(ref byte[] data)
         {
             // Size:
             // ===

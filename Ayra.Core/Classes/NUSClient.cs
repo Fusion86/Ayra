@@ -52,7 +52,7 @@ namespace Ayra.Core.Classes
             NUSWebClient client = GetNewNUSWebClient();
             string url = nusBaseUrl + titleId + "/tmd";
             byte[] data = await client.DownloadDataTaskAsync(new Uri(url));
-            return TMD.Load(data);
+            return TMD.Load(ref data);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Ayra.Core.Classes
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
