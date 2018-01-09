@@ -34,12 +34,12 @@ namespace Ayra.Core.Models
         }
     }
 
-    public class FST_FileInfo
+    public class FST_FDInfoBase
     {
-        private _FST_FileInfo native;
+        protected _FST_FDInfo native;
 
         public bool IsDirectory => Convert.ToBoolean(native.Type & 1);
-        public int NameOffset 
+        public int NameOffset
         {
             get
             {
@@ -50,23 +50,32 @@ namespace Ayra.Core.Models
             }
         }
 
-        public UInt32 FileCount => native.Size;
-        public UInt32 FileSize => native.Size;
-
-        public static FST_FileInfo Load(byte[] data)
+        public static FST_FDInfoBase Load(byte[] data)
         {
-            return new FST_FileInfo
-            {
-                native = data.ToStruct<_FST_FileInfo>()
-            };
+            FST_FDInfoBase info = new FST_FDInfoBase { native = data.ToStruct<_FST_FDInfo>() };
+            if (info.IsDirectory) return new FST_DirectoryInfo { native = info.native };
+            else return new FST_FileInfo { native = info.native };
         }
+    }
+
+    public class FST_DirectoryInfo : FST_FDInfoBase
+    {
+        public UInt32 ParentOffset => native.Offset;
+        //public UInt32 NextOffset => native.Size;
+        public UInt32 FileCount => native.Size;
+    }
+
+    public class FST_FileInfo : FST_FDInfoBase
+    {
+        public UInt32 FileOffset => native.Offset;
+        public UInt32 FileSize => native.Size;
     }
 
     public class FST
     {
         public FST_Header Header;
         public FST_SecondaryHeader[] SecondaryHeaders;
-        public FST_FileInfo[] Entries;
+        public FST_FDInfoBase[] Entries;
         public string[] FileNames; // Or directory
 
         public static FST Load(byte[] data)
@@ -90,17 +99,17 @@ namespace Ayra.Core.Models
             // Read root
             byte[] rootData = new byte[0x10];
             Buffer.BlockCopy(data, offset, rootData, 0, rootData.Length);
-            FST_FileInfo rootEntry = FST_FileInfo.Load(rootData);
+            FST_DirectoryInfo rootEntry = FST_FDInfoBase.Load(rootData) as FST_DirectoryInfo;
 
             Debug.WriteLine($"[FST] Found {rootEntry.FileCount} files/directories");
 
             // Read all entries (including root again)
-            fst.Entries = new FST_FileInfo[rootEntry.FileCount];
+            fst.Entries = new FST_FDInfoBase[rootEntry.FileCount];
             for (int i = 0; i < rootEntry.FileCount; ++i)
             {
                 byte[] entryData = new byte[0x10]; // NOTE: Look carefully ++i instead of i++
                 Buffer.BlockCopy(data, offset + i * 0x10, entryData, 0, entryData.Length);
-                fst.Entries[i] = FST_FileInfo.Load(entryData);
+                fst.Entries[i] = FST_FDInfoBase.Load(entryData);
             }
 
             // fst.Entries[0] == rootEntry, so they are the same (not just the same data, but same address)
@@ -108,13 +117,22 @@ namespace Ayra.Core.Models
             // Read name table
             int nameTableOffset = offset + (int)rootEntry.FileCount * 0x10; // 0x10 = sizeof(FST_FileInfo)
 
-            UInt32[] entry = new UInt32[16];
-            UInt32[] lentry = new UInt32[16];
+            int[] entry = new int[16];
+            int[] lentry = new int[16];
 
             int level = 0; // Max is 15 (aka 16 states)
             fst.FileNames = new string[rootEntry.FileCount];
-            for (int i = 0; i < rootEntry.FileCount; i++)
+            for (int i = 1; i < rootEntry.FileCount; ++i)
             {
+                if (level > 0)
+                {
+                    while (lentry[level - 1] == i)
+                    {
+                        Debug.WriteLine("[FST] Level--");
+                        level--;
+                    }
+                }
+
                 char[] chars = new char[0xFF];
                 for (int j = 0; j < chars.Length; j++)
                 {
@@ -127,11 +145,19 @@ namespace Ayra.Core.Models
 
                 if (fst.Entries[i].IsDirectory)
                 {
-                    Debug.WriteLine($"[FST] Found directory '{name}' at level {0}");
+                    //entry[level] = i;
+                    //lentry[level++] = (int)fst.Entries[i].Offset;
+
+                    if (level > 15)
+                    {
+                        throw new Exception("Level error");
+                    }
+
+                    Debug.WriteLine($"[FST] Found directory '{name}' at level {level}");
                 }
                 else
                 {
-                    Debug.WriteLine($"[FST] Found file '{name}' at level {0}");
+                    Debug.WriteLine($"[FST] Found file '{name}' at level {level}");
                 }
             }
 

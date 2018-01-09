@@ -8,7 +8,7 @@ namespace Ayra.Core.Structs
     // See http://wiiubrew.org/wiki/FST
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct _FST_Header
+    public struct _FST_Header // cdecrypt: FST (first part)
     {
         [Endian(Endianness.BigEndian)]
         public UInt32 Magic;
@@ -27,7 +27,7 @@ namespace Ayra.Core.Structs
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
-    public struct _FST_SecondaryHeader
+    public struct _FST_SecondaryHeader // cdecrypt: FSTInfo
     {
         [Endian(Endianness.BigEndian)]
         public UInt32 Unk1; // Starting cluster?
@@ -49,7 +49,7 @@ namespace Ayra.Core.Structs
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct _FST_FileInfo
+    public struct _FST_FDInfo // cdecrypt: FEntry
     {
         public byte Type;
 
@@ -57,15 +57,15 @@ namespace Ayra.Core.Structs
         public byte[] NameOffset;
 
         [Endian(Endianness.BigEndian)]
-        public UInt32 Offset;
+        public UInt32 Offset; // FileOffset or ParentOffset
 
         [Endian(Endianness.BigEndian)]
-        public UInt32 Size; // File size or directory size
+        public UInt32 Size; // FileLength or NextOffset
 
         [Endian(Endianness.BigEndian)]
         public UInt16 Flags;
 
         [Endian(Endianness.BigEndian)]
-        public UInt16 StorageClusterIndex;
+        public UInt16 StorageClusterIndex; // Or maybe ContentId
     }
 }
