@@ -25,7 +25,7 @@ namespace Ayra.Core.Models
     {
         private _FST_SecondaryHeader native;
 
-        public static FST_SecondaryHeader Load(byte[] data)
+        public static FST_SecondaryHeader Load(in byte[] data)
         {
             return new FST_SecondaryHeader
             {
@@ -50,7 +50,7 @@ namespace Ayra.Core.Models
             }
         }
 
-        public static FST_FDInfoBase Load(byte[] data)
+        public static FST_FDInfoBase Load(in byte[] data)
         {
             FST_FDInfoBase info = new FST_FDInfoBase { native = data.ToStruct<_FST_FDInfo>() };
             if (info.IsDirectory) return new FST_DirectoryInfo { native = info.native };
@@ -78,7 +78,7 @@ namespace Ayra.Core.Models
         public FST_FDInfoBase[] Entries;
         public string[] FileNames; // Or directory
 
-        public static FST Load(byte[] data)
+        public static FST Load(in byte[] data)
         {
             FST fst = new FST();
             fst.Header = FST_Header.Load(data);
@@ -124,13 +124,10 @@ namespace Ayra.Core.Models
             fst.FileNames = new string[rootEntry.FileCount];
             for (int i = 1; i < rootEntry.FileCount; ++i)
             {
-                if (level > 0)
+                while (level > 0 && lentry[level - 1] == i)
                 {
-                    while (lentry[level - 1] == i)
-                    {
-                        Debug.WriteLine("[FST] Level--");
-                        level--;
-                    }
+                    Debug.WriteLine("[FST] Going up a level");
+                    level--;
                 }
 
                 char[] chars = new char[0xFF];
@@ -140,24 +137,23 @@ namespace Ayra.Core.Models
                     if (chars[j] == 0x00) break;
                 }
 
-                string name = new string(chars).Split('\0')[0]; // Split to remove zero terminators from string
-                fst.FileNames[i] = name;
+                fst.FileNames[i] = new string(chars).Split('\0')[0]; // Split to remove zero terminators from string
 
                 if (fst.Entries[i].IsDirectory)
                 {
-                    //entry[level] = i;
-                    //lentry[level++] = (int)fst.Entries[i].Offset;
+                    entry[level] = i;
+                    lentry[level++] = (int)(fst.Entries[i] as FST_DirectoryInfo).FileCount;
 
                     if (level > 15)
                     {
                         throw new Exception("Level error");
                     }
 
-                    Debug.WriteLine($"[FST] Found directory '{name}' at level {level}");
+                    Debug.WriteLine($"[FST] Found directory '{fst.FileNames[i]}' at level {level}");
                 }
                 else
                 {
-                    Debug.WriteLine($"[FST] Found file '{name}' at level {level}");
+                    Debug.WriteLine($"[FST] Found file '{fst.FileNames[i]}' at level {level}");
                 }
             }
 
