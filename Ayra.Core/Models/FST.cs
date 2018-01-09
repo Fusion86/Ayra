@@ -76,7 +76,7 @@ namespace Ayra.Core.Models
         public FST_Header Header;
         public FST_SecondaryHeader[] SecondaryHeaders;
         public FST_FDInfoBase[] Entries;
-        public string[] FileNames; // Or directory
+        public string[] FilePaths; // Or directory
 
         public static FST Load(in byte[] data)
         {
@@ -114,19 +114,22 @@ namespace Ayra.Core.Models
 
             // fst.Entries[0] == rootEntry, so they are the same (not just the same data, but same address)
 
-            // Read name table
+            #region Build file paths
+            // TODO: Rewrite this
+
             int nameTableOffset = offset + (int)rootEntry.FileCount * 0x10; // 0x10 = sizeof(FST_FileInfo)
 
             int[] entry = new int[16];
             int[] lentry = new int[16];
 
             int level = 0; // Max is 15 (aka 16 states)
-            fst.FileNames = new string[rootEntry.FileCount];
+            string[] fileNames = new string[rootEntry.FileCount];
+            fst.FilePaths = new string[rootEntry.FileCount];
             for (int i = 1; i < rootEntry.FileCount; ++i)
             {
                 while (level > 0 && lentry[level - 1] == i)
                 {
-                    Debug.WriteLine("[FST] Going up a level");
+                    // Debug.WriteLine("[FST] Going up a level");
                     level--;
                 }
 
@@ -137,7 +140,7 @@ namespace Ayra.Core.Models
                     if (chars[j] == 0x00) break;
                 }
 
-                fst.FileNames[i] = new string(chars).Split('\0')[0]; // Split to remove zero terminators from string
+                fileNames[i] = new string(chars).Split('\0')[0]; // Split to remove zero terminators from string
 
                 if (fst.Entries[i].IsDirectory)
                 {
@@ -149,13 +152,25 @@ namespace Ayra.Core.Models
                         throw new Exception("Level error");
                     }
 
-                    Debug.WriteLine($"[FST] Found directory '{fst.FileNames[i]}' at level {level}");
+                    // Debug.WriteLine($"[FST] Found directory '{fileNames[i]}' at level {level}");
                 }
-                else
+                // else
+                // {
+                string path = "";
+                for (int j = 0; j < level; j++)
                 {
-                    Debug.WriteLine($"[FST] Found file '{fst.FileNames[i]}' at level {level}");
+                    int dirnameIndex = entry[j];
+                    path += fileNames[dirnameIndex] + "/";
                 }
+
+                if (!fst.Entries[i].IsDirectory) path += fileNames[i];
+                fst.FilePaths[i] = path;
+
+                string type = fst.Entries[i].IsDirectory ? "directory" : "file";
+                Debug.WriteLine($"[FST] Found {type} '{path}'");
+                // }
             }
+            #endregion
 
             return fst;
         }
