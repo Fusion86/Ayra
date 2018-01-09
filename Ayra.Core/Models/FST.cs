@@ -112,7 +112,7 @@ namespace Ayra.Core.Models
                 fst.Entries[i] = FST_FDInfoBase.Load(ref entryData);
             }
 
-            // fst.Entries[0] == rootEntry, so they are the same (not just the same data, but same address)
+            // fst.Entries[0] = rootEntry, so they are the same (not just the same data, but same address)
 
             #region Build file paths
             // TODO: Rewrite this
