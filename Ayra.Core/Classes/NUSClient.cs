@@ -47,11 +47,12 @@ namespace Ayra.Core.Classes
         /// </summary>
         /// <param name="titleId">Title to download the metadata for</param>
         /// <returns></returns>
-        public async Task<TMD> DownloadTMD(string titleId)
+        public async Task<TMD> DownloadTMD(string titleId, bool saveLocal = false, string savePath = "tmd")
         {
             NUSWebClient client = GetNewNUSWebClient();
             string url = nusBaseUrl + titleId + "/tmd";
             byte[] data = await client.DownloadDataTaskAsync(new Uri(url));
+            if (saveLocal) File.WriteAllBytes(savePath, data);
             return TMD.Load(ref data);
         }
 
@@ -60,10 +61,11 @@ namespace Ayra.Core.Classes
         /// </summary>
         /// <param name="titleId"></param>
         /// <returns></returns>
-        public async Task<object> DownloadCetk(string titleId)
+        public async Task<object> DownloadCetk(string titleId, bool saveLocal = false, string savePath = "cetk")
         {
             string url = nusBaseUrl + titleId + "/cetk";
             throw new NotImplementedException();
+            //if (saveLocal) File.WriteAllBytes(savePath, data);
         }
 
         /// <summary>
