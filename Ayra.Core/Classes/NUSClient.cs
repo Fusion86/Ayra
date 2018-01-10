@@ -113,6 +113,8 @@ namespace Ayra.Core.Classes
         /// <returns></returns>
         public async Task DownloadTitleParallel(TMD tmd, string outDir, int maxConcurrent = 4)
         {
+            throw new NotSupportedException("Doesn't work atm");
+
             List<Task> tasks = new List<Task>();
             for (int i = 0; i < tmd.Header.NumContents; i++)
             {
