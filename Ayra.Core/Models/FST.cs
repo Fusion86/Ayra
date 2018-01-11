@@ -105,14 +105,13 @@ namespace Ayra.Core.Models
 
             // Read all entries (including root again)
             fst.Entries = new FST_FDInfoBase[rootEntry.FileCount];
-            for (int i = 0; i < rootEntry.FileCount; ++i)
+            fst.Entries[0] = rootEntry;
+            for (int i = 1; i < rootEntry.FileCount; ++i)
             {
                 byte[] entryData = new byte[0x10]; // NOTE: Look carefully ++i instead of i++
                 Buffer.BlockCopy(data, offset + i * 0x10, entryData, 0, entryData.Length);
                 fst.Entries[i] = FST_FDInfoBase.Load(ref entryData);
             }
-
-            // fst.Entries[0] = rootEntry, so they are the same (not just the same data, but same address)
 
             #region Build file paths
             // TODO: Rewrite this
