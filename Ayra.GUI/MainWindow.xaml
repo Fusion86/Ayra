@@ -13,7 +13,17 @@
         <VM:MainWindowViewModel x:Name="vm"/>
     </Window.DataContext>
 
+    <Window.CommandBindings>
+        <!--<CommandBinding Command="TitleKeyDatabase_Refresh" CanExecute="TitleKeyDatabase_Refresh_CanExecute"  Executed="TitleKeyDatabase_Refresh_Executed"/>-->
+    </Window.CommandBindings>
+
     <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="White">
+            <MenuItem Header="Title Key Database">
+                <MenuItem Header="Refresh" Click="MenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+        
         <StatusBar DockPanel.Dock="Bottom">
 
         </StatusBar>
@@ -27,8 +37,11 @@
 
             <TabControl Grid.Column="0">
                 <TabItem Header="Game List">
-                    <DataGrid>
-
+                    <DataGrid ItemsPanel="{Binding TitleKeyDatabaseEntries}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Title ID" Binding="{Binding TitleId}"/>
+                        </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
 
