@@ -7,23 +7,8 @@ using System.Threading.Tasks;
 
 namespace Ayra.TitleKeyDatabase.Wii_U
 {
-    /// <summary>
-    /// Only useful when using a website based on TomEke/WiiU-Title-Key
-    /// </summary>
-    public class TitleKeyDatabaseEntry
+    public class TitleKeyDatabaseEntry : TitleKeyDatabaseEntryBase
     {
-        [JsonProperty("titleID")]
-        public string Id { get; set; }
-
-        [JsonProperty("titleKey")]
-        public string Key { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("region")]
-        public NSoftwareRegion? Region { get; set; }
-
         [JsonProperty("ticket"), JsonConverter(typeof(BoolConverter))]
         public bool HasTicket { get; set; }
 

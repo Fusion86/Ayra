@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Ayra.Core\Ayra.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="N3DS\" />
+    <Folder Include="Wii U\" />
+  </ItemGroup>
 </Project>

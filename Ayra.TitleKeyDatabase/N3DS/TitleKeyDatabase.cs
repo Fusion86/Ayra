@@ -5,11 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 
-namespace Ayra.TitleKeyDatabase.Wii_U
+namespace Ayra.TitleKeyDatabase.N3DS
 {
     public class TitleKeyDatabase
     {
-        private const string url = "http://wiiu.titlekeys.gq";
+        private const string url = "http://3ds.titlekeys.gq";
 
         private List<TitleKeyDatabaseEntry> entries = new List<TitleKeyDatabaseEntry>();
         public IReadOnlyList<TitleKeyDatabaseEntry> Entries => entries.AsReadOnly();

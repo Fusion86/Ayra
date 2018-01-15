@@ -4,6 +4,9 @@ using System;
 
 namespace Ayra.Core.Models
 {
+    /// <summary>
+    /// TMD container that works for 3DS and Wii U games
+    /// </summary>
     public class TMD
     {
         public _TMD_Header Header;
