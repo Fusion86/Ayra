@@ -4,13 +4,13 @@ using Ayra.Core.Enums;
 using Ayra.Core.Helpers;
 using Ayra.Core.Models;
 using Ayra.Core.Extensions;
-using Ayra.TitleKeyDatabase.Wii_U;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Ayra.TitleKeyDatabase;
 
 namespace Ayra.CLI
 {
@@ -46,39 +46,57 @@ namespace Ayra.CLI
         //    Console.ReadLine();
         //}
 
+        //static async Task Main(string[] args)
+        //{
+        //    NUSClient client = new NUSClient(NDevice.WII_U);
+        //    TMD tmd = await client.DownloadTMD("0005000e101a9f00");
+        //    string gameLocation = tmd.Header.TitleId.ToString("X8");
+
+        //    //await client.DownloadTitle(tmd, gameLocation);
+        //    byte[] ticketData = File.ReadAllBytes(Path.Combine(gameLocation, "cetk"));
+        //    Ticket ticket = Ticket.Load(ref ticketData);
+
+        //    CDecrypt.DecryptContents(tmd, ticket, gameLocation);
+        //}
+
         static async Task Main(string[] args)
         {
             NUSClient client = new NUSClient(NDevice.WII_U);
-            TMD tmd = await client.DownloadTMD("0005000e101a9f00");
-            string gameLocation = tmd.Header.TitleId.ToString("X8");
+            TMD tmd = await client.DownloadTMD("0004000000068f00");
 
-            //await client.DownloadTitle(tmd, gameLocation);
-            byte[] ticketData = File.ReadAllBytes(Path.Combine(gameLocation, "cetk"));
-            Ticket ticket = Ticket.Load(ref ticketData);
+            Console.WriteLine($"TitleID: {tmd.Header.TitleId.ToString("X8")}");
 
-            CDecrypt.DecryptContents(tmd, ticket, gameLocation);
+            TitleKeyDatabase.N3DS.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.N3DS.TitleKeyDatabase();
+            titleKeyDatabase.UpdateDatabase();
+            var list = titleKeyDatabase.Entries;
+
+            var item = list.FirstOrDefault(x => x.Id.ToLower() == "0004000000068f00".ToLower());
+
+            if (item != null)
+                Console.WriteLine($"TitleKeyDatabaseEntry: {item.Name} [{item.Region}]");
         }
 
         #region CLI Methods
-        static TitleKeyDatabaseEntry CLI_SelectGame(IEnumerable<TitleKeyDatabaseEntry> keys)
+        static TitleKeyDatabaseEntryBase CLI_SelectGame(IEnumerable<TitleKeyDatabaseEntryBase> keys)
         {
             while (true)
             {
                 Console.Write("Search for game: ");
                 string query = Console.ReadLine().ToLower();
 
-                List<TitleKeyDatabaseEntry> searchResults = keys.Where(x => x.Name != null && x.Name.ToLower().Contains(query)).ToList();
+                List<TitleKeyDatabaseEntryBase> searchResults = keys.Where(x => x.Name != null && x.Name.ToLower().Contains(query)).ToList();
 
                 if (searchResults.Count > 0)
                 {
                     for (int i = 0; i < searchResults.Count; i++)
                     {
-                        TitleKeyDatabaseEntry x = searchResults[i];
+                        TitleKeyDatabaseEntryBase x = searchResults[i];
 
-                        string str = x.HasTicket ? (i + 1).ToString().PadRight(4) : "".PadRight(4);
+                        //string str = x.HasTicket ? (i + 1).ToString().PadRight(4) : "".PadRight(4);
+                        string str = "";
                         str += $"{x.Name.Replace("\n", " ")} [{NSoftwareTypes.GetById(x.Id)}] [{x.Region}]";
                         str += $" [{x.Id}]";
-                        if (!x.HasTicket) str += " [NO TICKET]";
+                        //if (!x.HasTicket) str += " [NO TICKET]";
 
                         Console.WriteLine(str);
                     }
