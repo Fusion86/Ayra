@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ayra.Core.Data
+﻿namespace Ayra.Core.Data
 {
     public static class KeyChain
     {

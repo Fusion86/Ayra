@@ -2,8 +2,9 @@
 {
     public enum NDevice
     {
-        DSI,
-        WII,
-        WII_U,
+        DSi,
+        Wii,
+        WiiU,
+        N3DS,
     }
 }

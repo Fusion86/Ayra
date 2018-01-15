@@ -1,5 +1,4 @@
 ﻿using Ayra.Core.Converters;
-using Ayra.Core.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Net;

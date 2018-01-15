@@ -1,9 +1,9 @@
 ﻿using Ayra.Core.Extensions;
-using Ayra.Core.Structs;
+using Ayra.Core.Structs.WiiU;
 using System;
 using System.Collections.Generic;
 
-namespace Ayra.Core.Models
+namespace Ayra.Core.Models.WiiU
 {
     public class Ticket
     {
@@ -50,7 +50,6 @@ namespace Ayra.Core.Models
 
             //    entries.Add(entry);
             //}
-
 
             // Only parse the first entry for now, since we don't need more atm and above code is incorrect
             // Not all items in a ticket file are the same (as far as I know atm)

@@ -1,5 +1,4 @@
-﻿using System;
-namespace Ayra.Benchmark
+﻿namespace Ayra.Benchmark
 {
     public interface IBenchmark { }
 }

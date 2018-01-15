@@ -1,13 +1,11 @@
 ﻿// Based on https://github.com/crediar/cdecrypt/blob/master/main.cpp
 
-using Ayra.Core.Models;
-using Ayra.Core.Extensions;
+using Ayra.Core.Data;
+using Ayra.Core.Models.WiiU;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
-using Ayra.Core.Data;
-using System.Diagnostics.Contracts;
 
 namespace Ayra.Core.Helpers
 {
@@ -34,9 +32,11 @@ namespace Ayra.Core.Helpers
                 case "Root-CA00000003-CP0000000b":
                     aes.Key = KeyChain.WIIU_COMMON_KEY;
                     break;
+
                 case "Root-CA00000004-CP00000010":
                     aes.Key = KeyChain.WIIU_COMMON_DEV_KEY;
                     break;
+
                 default: throw new NotSupportedException("Unknown Root type: " + tmd.Header.Issuer);
             }
 

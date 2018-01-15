@@ -1,8 +1,8 @@
 ﻿using Ayra.Core.Extensions;
-using Ayra.Core.Structs;
+using Ayra.Core.Structs.WiiU;
 using System;
 
-namespace Ayra.Core.Models
+namespace Ayra.Core.Models.WiiU
 {
     /// <summary>
     /// TMD container that works for 3DS and Wii U games

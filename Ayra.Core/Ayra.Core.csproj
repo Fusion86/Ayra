@@ -15,6 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enums\" />
-    <Folder Include="Structs\" />
+    <Folder Include="Structs\N3DS\" />
   </ItemGroup>
 </Project>

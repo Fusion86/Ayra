@@ -1,9 +1,9 @@
 ﻿using Ayra.Core.Extensions;
-using Ayra.Core.Structs;
+using Ayra.Core.Structs.WiiU;
 using System;
 using System.Diagnostics;
 
-namespace Ayra.Core.Models
+namespace Ayra.Core.Models.WiiU
 {
     public class FST_Header
     {
@@ -39,6 +39,7 @@ namespace Ayra.Core.Models
         protected _FST_FDInfo native;
 
         public bool IsDirectory => Convert.ToBoolean(native.Type & 1);
+
         public int NameOffset
         {
             get
@@ -61,6 +62,7 @@ namespace Ayra.Core.Models
     public class FST_DirectoryInfo : FST_FDInfoBase
     {
         public UInt32 ParentOffset => native.Offset;
+
         //public UInt32 NextOffset => native.Size;
         public UInt32 FileCount => native.Size;
     }
@@ -114,6 +116,7 @@ namespace Ayra.Core.Models
             }
 
             #region Build file paths
+
             // TODO: Rewrite this
 
             int nameTableOffset = offset + (int)rootEntry.FileCount * 0x10; // 0x10 = sizeof(FST_FileInfo)
@@ -164,7 +167,8 @@ namespace Ayra.Core.Models
                 string type = fst.Entries[i].IsDirectory ? "directory" : "file";
                 Debug.WriteLine($"[FST] Found {type} '{path}'");
             }
-            #endregion
+
+            #endregion Build file paths
 
             return fst;
         }

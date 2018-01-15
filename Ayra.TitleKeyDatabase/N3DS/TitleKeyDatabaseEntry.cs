@@ -1,9 +1,4 @@
-﻿using Ayra.Core.Converters;
-using Ayra.Core.Enums;
-using Newtonsoft.Json;
-using System;
-using System.Net;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace Ayra.TitleKeyDatabase.N3DS
 {

@@ -1,9 +1,8 @@
-﻿using Ayra.Core.Extensions;
-using Ayra.Core.Helpers;
+﻿using Ayra.Core.Helpers;
 using System;
 using System.Runtime.InteropServices;
 
-namespace Ayra.Core.Structs
+namespace Ayra.Core.Structs.WiiU
 {
     // See http://wiiubrew.org/wiki/FST
 

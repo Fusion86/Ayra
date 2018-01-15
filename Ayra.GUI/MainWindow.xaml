@@ -10,50 +10,47 @@
         ResizeMode="CanResizeWithGrip">
 
     <Window.DataContext>
-        <VM:MainWindowViewModel x:Name="vm"/>
+        <VM:MainWindowViewModel x:Name="vm" />
     </Window.DataContext>
 
     <Window.CommandBindings>
-        <!--<CommandBinding Command="TitleKeyDatabase_Refresh" CanExecute="TitleKeyDatabase_Refresh_CanExecute"  Executed="TitleKeyDatabase_Refresh_Executed"/>-->
+        <!--<CommandBinding Command="TitleKeyDatabase_Refresh" CanExecute="TitleKeyDatabase_Refresh_CanExecute"  Executed="TitleKeyDatabase_Refresh_Executed" />-->
     </Window.CommandBindings>
 
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White">
             <MenuItem Header="Title Key Database">
-                <MenuItem Header="Refresh" Click="MenuItem_Click"/>
+                <MenuItem Header="Refresh" Click="MenuItem_Click" />
             </MenuItem>
         </Menu>
-        
-        <StatusBar DockPanel.Dock="Bottom">
 
+        <StatusBar DockPanel.Dock="Bottom">
         </StatusBar>
 
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <TabControl Grid.Column="0">
                 <TabItem Header="Game List">
                     <DataGrid ItemsPanel="{Binding TitleKeyDatabaseEntries}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Title ID" Binding="{Binding TitleId}"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="Title ID" Binding="{Binding TitleId}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
 
                 <TabItem Header="Settings">
-
                 </TabItem>
             </TabControl>
 
-            <GridSplitter Grid.Column="1"/>
+            <GridSplitter Grid.Column="1" />
 
             <Grid Grid.Column="2">
-
             </Grid>
         </Grid>
     </DockPanel>

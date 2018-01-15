@@ -1,7 +1,6 @@
 using Ayra.Core.Enums;
 using Newtonsoft.Json;
 using System;
-using System.Text;
 
 namespace Ayra.Core.Converters
 {
@@ -15,6 +14,8 @@ namespace Ayra.Core.Converters
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            if (reader.Value == null) return NSoftwareRegion.NONE;
+
             NSoftwareRegion region = new NSoftwareRegion();
             string str = reader.Value.ToString();
 

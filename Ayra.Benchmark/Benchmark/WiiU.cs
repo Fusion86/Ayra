@@ -1,25 +1,24 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using Ayra.Core.Classes;
+using Ayra.Core.Helpers;
+using Ayra.Core.Models.WiiU;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
-using Ayra.Core.Classes;
-using Ayra.Core.Enums;
-using Ayra.Core.Models;
 using System.IO;
 using System.Net;
-using Ayra.Core.Helpers;
 
 namespace Ayra.Benchmark.Benchmark
 {
     [ClrJob, CoreJob, MonoJob]
     public class Stuff : IBenchmark
     {
-        const string filePath = "tmd";
-        const string ticketPath = "cetk";
-        const string gamePath = "game";
+        private const string filePath = "tmd";
+        private const string ticketPath = "cetk";
+        private const string gamePath = "game";
 
         [GlobalSetup]
         public void Setup()
         {
-            NUSClient nus = new NUSClient(NDevice.WII_U);
+            NUSClientWiiU nus = new NUSClientWiiU();
             WebClient webClient = new WebClient();
 
             TMD tmd = nus.DownloadTMD(Config.TitleId, true, filePath).Result;

@@ -1,12 +1,9 @@
 ﻿using Ayra.Core.Classes;
-using Ayra.Core.Enums;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Ayra.Core.Models
+namespace Ayra.Core.Models.WiiU
 {
     public class Game
     {
@@ -18,8 +15,8 @@ namespace Ayra.Core.Models
 
         public async static Task<Game> GetFromNus(string titleId)
         {
-            NUSClient client = new NUSClient(NDevice.WII_U);
-            TMD tmd = await client.DownloadTMD("0005000e101a9f00");
+            NUSClientWiiU client = new NUSClientWiiU();
+            TMD tmd = await client.DownloadTMD(titleId);
 
             return new Game
             {

@@ -1,83 +1,94 @@
-﻿using Ayra.Core;
-using Ayra.Core.Classes;
-using Ayra.Core.Enums;
-using Ayra.Core.Helpers;
+﻿using Ayra.Core.Classes;
 using Ayra.Core.Models;
-using Ayra.Core.Extensions;
+using Ayra.TitleKeyDatabase;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Ayra.TitleKeyDatabase;
 
 namespace Ayra.CLI
 {
-    class Program
+    internal class Program
     {
-        //static async Task Main(string[] args)
-        //{
-        //    Console.WriteLine($"Ayra.CLI v{Assembly.GetExecutingAssembly().GetName().Version}");
-        //    Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntry)).GetName().Version}\n");
-
-        //    TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = TitleKeyDatabase.Wii_U.TitleKeyDatabase.Instance;
-
-        //    Console.WriteLine("Downloading Title Keys...");
-        //    titleKeyDatabase.UpdateDatabase("http://wiiu.titlekeys.gq/");
-        //    Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys\n");
-
-        //    TitleKeyDatabaseEntry selectedGame = CLI_SelectGame(titleKeyDatabase.Entries);
-
-        //    NUSClient client = new NUSClient(NDevice.WII_U);
-
-        //    Console.WriteLine("Downloading metadata...");
-        //    TMD tmd = await client.DownloadTMD(selectedGame.Id);
-
-        //    //if (!selectedGame.HasTicket)
-        //    //{
-        //    //    Console.WriteLine("There is not ticket available for this title!");
-        //    //    goto Exit;
-        //    //}
-
-        //    //byte[] ticket = await selectedGame.DownloadTicket("http://wiiu.titlekeys.gq/");
-
-        //    Console.WriteLine("Press enter to exit...");
-        //    Console.ReadLine();
-        //}
-
-        //static async Task Main(string[] args)
-        //{
-        //    NUSClient client = new NUSClient(NDevice.WII_U);
-        //    TMD tmd = await client.DownloadTMD("0005000e101a9f00");
-        //    string gameLocation = tmd.Header.TitleId.ToString("X8");
-
-        //    //await client.DownloadTitle(tmd, gameLocation);
-        //    byte[] ticketData = File.ReadAllBytes(Path.Combine(gameLocation, "cetk"));
-        //    Ticket ticket = Ticket.Load(ref ticketData);
-
-        //    CDecrypt.DecryptContents(tmd, ticket, gameLocation);
-        //}
-
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            NUSClient client = new NUSClient(NDevice.WII_U);
-            TMD tmd = await client.DownloadTMD("0004000000068f00");
+            Console.WriteLine($"  Ayra.CLI v{Assembly.GetExecutingAssembly().GetName().Version}");
+            Console.WriteLine($"  Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntryBase)).GetName().Version}\n");
 
-            Console.WriteLine($"TitleID: {tmd.Header.TitleId.ToString("X8")}");
+            List<(string Name, Action Action)> menuOptions = new List<(string, Action)>
+            {
+                ( "Download N3DS Games", CLI_N3DS_Download ),
+                ( "Download Wii U Games", CLI_WiiU_Download ),
+            };
 
-            TitleKeyDatabase.N3DS.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.N3DS.TitleKeyDatabase();
-            titleKeyDatabase.UpdateDatabase();
-            var list = titleKeyDatabase.Entries;
+            Console.WriteLine("Menu:\n");
+            for (int i = 0; i < menuOptions.Count; i++)
+            {
+                string str = "  " + (i + 1).ToString().PadRight(4);
+                str += menuOptions[i].Name;
+                Console.WriteLine(str);
 
-            var item = list.FirstOrDefault(x => x.Id.ToLower() == "0004000000068f00".ToLower());
+                if (i == menuOptions.Count - 1) Console.WriteLine();
+            }
 
-            if (item != null)
-                Console.WriteLine($"TitleKeyDatabaseEntry: {item.Name} [{item.Region}]");
+            int selectedNumber = 0;
+            do
+            {
+                Console.Write("Enter number: ");
+                string str = Console.ReadLine();
+                int.TryParse(str, out selectedNumber);
+            } while (selectedNumber == 0 || selectedNumber > menuOptions.Count);
+
+            // Run selected cli method
+            menuOptions[selectedNumber - 1].Action();
+
+            Console.WriteLine("Press enter to exit...");
+            Console.ReadLine();
         }
 
-        #region CLI Methods
-        static TitleKeyDatabaseEntryBase CLI_SelectGame(IEnumerable<TitleKeyDatabaseEntryBase> keys)
+        #region Nintendo 3DS
+
+        private static void CLI_N3DS_Download()
+        {
+        }
+
+        #endregion Nintendo 3DS
+
+        #region Nintendo Wii U
+
+        private static void CLI_WiiU_Download()
+        {
+            TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.Wii_U.TitleKeyDatabase();
+
+            Console.WriteLine("Downloading Title Keys...");
+            titleKeyDatabase.UpdateDatabase();
+            Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys\n");
+
+            TitleKeyDatabaseEntryBase selectedGame = CLI_SelectGame(titleKeyDatabase.Entries);
+
+            NUSClientWiiU client = new NUSClientWiiU();
+
+            //    Console.WriteLine("Downloading metadata...");
+            //    TMD tmd = await client.DownloadTMD(selectedGame.Id);
+
+            //    //if (!selectedGame.HasTicket)
+            //    //{
+            //    //    Console.WriteLine("There is not ticket available for this title!");
+            //    //    goto Exit;
+            //    //}
+
+            //    //byte[] ticket = await selectedGame.DownloadTicket("http://wiiu.titlekeys.gq/");
+
+            //    Console.WriteLine("Press enter to exit...");
+            //    Console.ReadLine();
+        }
+
+        #endregion Nintendo Wii U
+
+        #region Shared
+
+        private static TitleKeyDatabaseEntryBase CLI_SelectGame(IEnumerable<TitleKeyDatabaseEntryBase> keys)
         {
             while (true)
             {
@@ -92,13 +103,13 @@ namespace Ayra.CLI
                     {
                         TitleKeyDatabaseEntryBase x = searchResults[i];
 
-                        //string str = x.HasTicket ? (i + 1).ToString().PadRight(4) : "".PadRight(4);
-                        string str = "";
-                        str += $"{x.Name.Replace("\n", " ")} [{NSoftwareTypes.GetById(x.Id)}] [{x.Region}]";
+                        string str = "  " + (i + 1).ToString().PadRight(4);
+                        str += $"{x.Name.Replace("\n", " ")} [{NSoftwareTypes.GetById(x.Id).Name}] [{x.Region}]";
                         str += $" [{x.Id}]";
-                        //if (!x.HasTicket) str += " [NO TICKET]";
 
                         Console.WriteLine(str);
+
+                        if (i == searchResults.Count - 1) Console.WriteLine();
                     }
 
                     int selectedNumber = 0;
@@ -107,7 +118,7 @@ namespace Ayra.CLI
                         Console.Write("Enter number: ");
                         string str = Console.ReadLine();
                         int.TryParse(str, out selectedNumber);
-                    } while (selectedNumber == 0);
+                    } while (selectedNumber == 0 || selectedNumber > searchResults.Count);
 
                     return searchResults[selectedNumber - 1];
                 }
@@ -121,6 +132,7 @@ namespace Ayra.CLI
                 }
             }
         }
-        #endregion
+
+        #endregion Shared
     }
 }

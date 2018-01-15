@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Ayra.Core.Structs
+namespace Ayra.Core.Structs.WiiU
 {
     // See http://wiibrew.org/wiki/Ticket
 
@@ -30,7 +30,7 @@ namespace Ayra.Core.Structs
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16, ArraySubType = UnmanagedType.U1)]
         public byte[] EncryptedTitleKey;
 
-        byte Unk1;
+        private byte Unk1;
 
         [Endian(Endianness.BigEndian)]
         public UInt64 TicketId;
@@ -52,8 +52,8 @@ namespace Ayra.Core.Structs
         [Endian(Endianness.BigEndian)]
         public UInt32 PermitMask;
 
-        bool TitleExportAllowed;
-        byte CommonKeyIndex;
+        private bool TitleExportAllowed;
+        private byte CommonKeyIndex;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48, ArraySubType = UnmanagedType.U1)]
         public byte[] Unk3; // If last byte == 0x01 then this is a VC title
@@ -61,7 +61,7 @@ namespace Ayra.Core.Structs
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64, ArraySubType = UnmanagedType.U1)]
         public byte[] ContentAccessPermissions;
 
-        ushort Padding3;
+        private ushort Padding3;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
@@ -80,5 +80,4 @@ namespace Ayra.Core.Structs
         public _TicketEntry_Header Header;
         public _TicketEntry_TimeLimit[] TimeLimit;
     }
-
 }
