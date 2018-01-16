@@ -65,23 +65,23 @@ namespace Ayra.CLI
             titleKeyDatabase.UpdateDatabase();
             Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys\n");
 
-            TitleKeyDatabaseEntryBase selectedGame = CLI_SelectGame(titleKeyDatabase.Entries);
+            var selectedGame = (TitleKeyDatabase.Wii_U.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
 
             NUSClientWiiU client = new NUSClientWiiU();
 
             Console.WriteLine("Downloading metadata...");
             var tmd = await client.DownloadTMD(selectedGame.Id);
 
-            //    //if (!selectedGame.HasTicket)
-            //    //{
-            //    //    Console.WriteLine("There is not ticket available for this title!");
-            //    //    goto Exit;
-            //    //}
+            if (!selectedGame.HasTicket)
+            {
+                Console.WriteLine("There is not ticket available for this title!");
+                return;
+            }
 
-            //    //byte[] ticket = await selectedGame.DownloadTicket("http://wiiu.titlekeys.gq/");
+            byte[] ticket = await selectedGame.DownloadTicket();
 
-            //    Console.WriteLine("Press enter to exit...");
-            //    Console.ReadLine();
+            Console.WriteLine("Press enter to exit...");
+            Console.ReadLine();
         }
 
         #endregion Nintendo Wii U

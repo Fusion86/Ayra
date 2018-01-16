@@ -5,24 +5,18 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Ayra.CLI (integrated)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build cli",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/Ayra.CLI/bin/Debug/netcoreapp2.0/Ayra.CLI.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Ayra.CLI",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
         }
     ]
 }

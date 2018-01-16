@@ -9,8 +9,6 @@ namespace Ayra.TitleKeyDatabase.Wii_U
 {
     public class TitleKeyDatabase
     {
-        private const string url = "http://wiiu.titlekeys.gq";
-
         private List<TitleKeyDatabaseEntry> entries = new List<TitleKeyDatabaseEntry>();
         public IReadOnlyList<TitleKeyDatabaseEntry> Entries => entries.AsReadOnly();
 
@@ -25,7 +23,7 @@ namespace Ayra.TitleKeyDatabase.Wii_U
         {
             try
             {
-                string json = new WebClient().DownloadString(url + "/json");
+                string json = new WebClient().DownloadString(Config.Url + "/json");
 
                 if (storeLocalCopy) File.WriteAllText("TitleKeyDatabase.json", json);
                 entries = ParseJson(json);

@@ -1,5 +1,4 @@
 ﻿using Ayra.Core.Extensions;
-using Ayra.Core.Structs.N3DS;
 using System;
 
 namespace Ayra.Core.Models.N3DS
