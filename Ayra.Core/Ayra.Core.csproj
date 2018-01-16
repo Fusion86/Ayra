@@ -13,8 +13,4 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Enums\" />
-    <Folder Include="Structs\N3DS\" />
-  </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ namespace Ayra.Core.Helpers
             if (tmd.Header.Version != 1) throw new NotSupportedException();
 
             Debug.WriteLine("[DecryptContents] Title version: " + tmd.Header.TitleVersion);
-            Debug.WriteLine("[DecryptContents] Content count: " + tmd.Header.NumContents);
+            Debug.WriteLine("[DecryptContents] Content count: " + tmd.Header.ContentCount);
 
             //
             // AES setup

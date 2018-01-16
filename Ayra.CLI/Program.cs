@@ -49,7 +49,7 @@ namespace Ayra.CLI
 
         #region Nintendo 3DS
 
-        private static void CLI_N3DS_Download()
+        private static async void CLI_N3DS_Download()
         {
         }
 
@@ -57,7 +57,7 @@ namespace Ayra.CLI
 
         #region Nintendo Wii U
 
-        private static void CLI_WiiU_Download()
+        private static async void CLI_WiiU_Download()
         {
             TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.Wii_U.TitleKeyDatabase();
 
@@ -69,8 +69,8 @@ namespace Ayra.CLI
 
             NUSClientWiiU client = new NUSClientWiiU();
 
-            //    Console.WriteLine("Downloading metadata...");
-            //    TMD tmd = await client.DownloadTMD(selectedGame.Id);
+            Console.WriteLine("Downloading metadata...");
+            var tmd = await client.DownloadTMD(selectedGame.Id);
 
             //    //if (!selectedGame.HasTicket)
             //    //{

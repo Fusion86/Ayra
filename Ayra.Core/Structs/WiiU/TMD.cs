@@ -49,7 +49,7 @@ namespace Ayra.Core.Structs.WiiU
         public UInt16 TitleVersion;
 
         [Endian(Endianness.BigEndian)]
-        public UInt16 NumContents;
+        public UInt16 ContentCount;
 
         [Endian(Endianness.BigEndian)]
         public UInt16 BootIndex;

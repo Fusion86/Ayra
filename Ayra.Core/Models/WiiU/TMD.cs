@@ -13,9 +13,9 @@ namespace Ayra.Core.Models.WiiU
         {
             TMD tmd = new TMD();
             tmd.Header = data.ToStruct<_TMD_Header>();
-            tmd.Contents = new _TMD_ContentRecord[tmd.Header.NumContents];
+            tmd.Contents = new _TMD_ContentRecord[tmd.Header.ContentCount];
 
-            for (int i = 0; i < tmd.Header.NumContents; i++)
+            for (int i = 0; i < tmd.Header.ContentCount; i++)
             {
                 int offset = 0x30 * i;
                 byte[] contentData = new byte[0x24];
