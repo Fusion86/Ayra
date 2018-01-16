@@ -13,7 +13,12 @@ namespace Ayra.Core.Classes
         protected override string nusUserAgent => "wii libnup/1.0";
         protected override Type TMDType => typeof(TMD);
 
-        protected override Task DownloadContent(dynamic tmd, string outDir, int i)
+        public override Task DownloadTitle(dynamic tmd, string outDir)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task DownloadContent(dynamic tmd, string outDir, int i)
         {
             throw new NotImplementedException();
         }

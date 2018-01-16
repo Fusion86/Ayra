@@ -24,7 +24,7 @@ namespace Ayra.Core.Models
         public static NSoftwareType DLC = new NSoftwareType(new[] { "0005000C" }, "DLC");
         public static NSoftwareType Unknown = new NSoftwareType(null, "Unknown");
 
-        public static NSoftwareType GetById(string id)
+        public static NSoftwareType GetByTitleId(string id)
         {
             IEnumerable<NSoftwareType> types = typeof(NSoftwareTypes).GetFields().Select(x => (NSoftwareType)x.GetValue(null)); // TODO: Maybe make compile time const, if possible
 

@@ -7,7 +7,7 @@ namespace Ayra.TitleKeyDatabase
     public class TitleKeyDatabaseEntryBase
     {
         [JsonProperty("titleID")]
-        public string Id { get; set; }
+        public string TitleId { get; set; }
 
         [JsonProperty("titleKey")]
         public string Key { get; set; }
