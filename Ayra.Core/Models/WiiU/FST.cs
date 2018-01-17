@@ -78,7 +78,7 @@ namespace Ayra.Core.Models.WiiU
         public FST_Header Header;
         public FST_SecondaryHeader[] SecondaryHeaders;
         public FST_FDInfoBase[] Entries;
-        public string[] FilePaths; // Or directory path
+        public string[] FilePaths; // And directory path
 
         public static FST Load(ref byte[] data)
         {

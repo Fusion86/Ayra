@@ -2,7 +2,6 @@
 using Ayra.Core.Models.WiiU;
 using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -15,12 +14,27 @@ namespace Ayra.Core.Classes
         protected override Type TMDType => typeof(TMD);
 
         /// <summary>
+        /// Download title to path
+        /// </summary>
+        /// <param name="tmd"></param>
+        /// <param name="outDir"></param>
+        public override async Task DownloadTitle(dynamic tmd, string outDir)
+        {
+            if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
+
+            for (int i = 0; i < tmd.Header.ContentCount; i++)
+            {
+                await DownloadContent(tmd, outDir, i);
+            }
+        }
+
+        /// <summary>
         /// Download content
         /// </summary>
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
         /// <param name="i">Content index</param>
-        protected override async Task DownloadContent(dynamic tmd, string outDir, int i)
+        public override async Task DownloadContent(dynamic tmd, string outDir, int i)
         {
             NUSWebClient client = GetNewNUSWebClient();
             Debug.WriteLine($"[DownloadTitle] Downloading {i + 1}/{tmd.Header.ContentCount} {Utility.GetSizeString((long)tmd.Contents[i].Size)}");

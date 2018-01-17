@@ -14,7 +14,7 @@ namespace Ayra.TitleKeyDatabase.Wii_U
         public async Task<byte[]> DownloadTicket()
         {
             if (!HasTicket) return null;
-            return await new WebClient().DownloadDataTaskAsync(new Uri(Config.Url + "/ticket/" + Id + ".tik"));
+            return await new WebClient().DownloadDataTaskAsync(new Uri(Config.Url + "/ticket/" + TitleId + ".tik"));
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Ayra.Core.Extensions
 {
     public static class StringExtensions
     {
-        public static byte[] ToByteArray(this string str)
+        public static byte[] ParseHexString(this string str)
         {
             int num = str.Length;
             byte[] bytes = new byte[num / 2];

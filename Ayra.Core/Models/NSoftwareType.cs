@@ -5,6 +5,7 @@ namespace Ayra.Core.Models
 {
     public class NSoftwareType
     {
+        // TODO: Maybe store headers in byte[] instead of sting?
         public string[] Headers { get; }
         public string Name { get; }
 
@@ -15,7 +16,7 @@ namespace Ayra.Core.Models
         }
     }
 
-    public class NSoftwareTypes
+    public static class NSoftwareTypes
     {
         public static NSoftwareType SystemApplication = new NSoftwareType(new[] { "00050010", "0005001B" }, "System Application");
         public static NSoftwareType eShopApplication = new NSoftwareType(new[] { "00050000" }, "eShop/Application");
@@ -24,7 +25,7 @@ namespace Ayra.Core.Models
         public static NSoftwareType DLC = new NSoftwareType(new[] { "0005000C" }, "DLC");
         public static NSoftwareType Unknown = new NSoftwareType(null, "Unknown");
 
-        public static NSoftwareType GetById(string id)
+        public static NSoftwareType GetByTitleId(string id)
         {
             IEnumerable<NSoftwareType> types = typeof(NSoftwareTypes).GetFields().Select(x => (NSoftwareType)x.GetValue(null)); // TODO: Maybe make compile time const, if possible
 

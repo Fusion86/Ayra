@@ -1,6 +1,4 @@
-﻿using Ayra.Core.Helpers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -56,21 +54,6 @@ namespace Ayra.Core.Classes
         }
 
         /// <summary>
-        /// Download title to path
-        /// </summary>
-        /// <param name="tmd"></param>
-        /// <param name="outDir"></param>
-        public async Task DownloadTitle(dynamic tmd, string outDir)
-        {
-            if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
-
-            for (int i = 0; i < tmd.Header.ContentCount; i++)
-            {
-                await DownloadContent(tmd, outDir, i);
-            }
-        }
-
-        /// <summary>
         /// Download title to path, but now in parallel
         /// </summary>
         /// <param name="titleId"></param>
@@ -89,20 +72,22 @@ namespace Ayra.Core.Classes
         /// <returns></returns>
         public async Task DownloadTitleParallel(dynamic tmd, string outDir, int maxConcurrent = 4)
         {
-            throw new NotSupportedException("Doesn't work atm");
+            throw new NotSupportedException();
 
-            List<Task> tasks = new List<Task>();
-            for (int i = 0; i < tmd.Header.ContentCount; i++)
-            {
-                int wtf = i; // TODO: If we don't do this then I __assume__ it'll pass the value of i at the end of this for loop, aka tmd.Header.NumContents
-                tasks.Add(new Task(async () => await DownloadContent(tmd, outDir, wtf)));
-            }
+            //List<Task> tasks = new List<Task>();
+            //for (int i = 0; i < tmd.Header.ContentCount; i++)
+            //{
+            //    int wtf = i; // TODO: If we don't do this then I __assume__ it'll pass the value of i at the end of this for loop, aka tmd.Header.NumContents
+            //    tasks.Add(new Task(async () => await DownloadContent(tmd, outDir, wtf)));
+            //}
 
-            // FIXME: Doesn't wait
-            await Tasks.StartAndWaitAllThrottledAsync(tasks, maxConcurrent);
+            //// FIXME: Doesn't wait
+            //await Tasks.StartAndWaitAllThrottledAsync(tasks, maxConcurrent);
         }
 
-        protected abstract Task DownloadContent(dynamic tmd, string outDir, int i);
+        public abstract Task DownloadTitle(dynamic tmd, string outDir);
+        public abstract Task DownloadContent(dynamic tmd, string outDir, int i);
+
         private dynamic LoadTMD(ref byte[] data)
         {
             return TMDType.GetMethod("Load").Invoke(null, new object[] { data });
