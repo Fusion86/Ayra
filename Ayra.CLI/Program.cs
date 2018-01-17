@@ -51,6 +51,13 @@ namespace Ayra.CLI
 
         private static async void CLI_N3DS_Download()
         {
+            TitleKeyDatabase.N3DS.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.N3DS.TitleKeyDatabase();
+
+            Console.WriteLine("Downloading Title Keys...");
+            titleKeyDatabase.UpdateDatabase();
+            Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys\n");
+
+            var selectedGame = (TitleKeyDatabase.N3DS.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
         }
 
         #endregion Nintendo 3DS
