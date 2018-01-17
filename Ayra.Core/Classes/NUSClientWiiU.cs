@@ -1,5 +1,5 @@
 ﻿using Ayra.Core.Helpers;
-using Ayra.Core.Models.WiiU;
+using Ayra.Core.Models.WUP;
 using System;
 using System.Diagnostics;
 using System.IO;

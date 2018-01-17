@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Ayra.Core.Structs.WiiU
+namespace Ayra.Core.Structs.WUP
 {
     // See http://wiibrew.org/wiki/Ticket
 

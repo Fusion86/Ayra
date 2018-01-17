@@ -1,4 +1,4 @@
-namespace Ayra.TitleKeyDatabase.Wii_U
+namespace Ayra.TitleKeyDatabase.WUP
 {
     internal static class Config
     {

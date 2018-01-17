@@ -1,7 +1,7 @@
 ﻿// Based on https://github.com/crediar/cdecrypt/blob/master/main.cpp
 
 using Ayra.Core.Data;
-using Ayra.Core.Models.WiiU;
+using Ayra.Core.Models.WUP;
 using System;
 using System.Diagnostics;
 using System.IO;

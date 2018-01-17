@@ -4,7 +4,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Ayra.TitleKeyDatabase.Wii_U
+namespace Ayra.TitleKeyDatabase.WUP
 {
     public class TitleKeyDatabaseEntry : TitleKeyDatabaseEntryBase
     {

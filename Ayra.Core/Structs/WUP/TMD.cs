@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Ayra.Core.Structs.WiiU
+namespace Ayra.Core.Structs.WUP
 {
     // See http://wiiubrew.org/wiki/Title_metadata
 

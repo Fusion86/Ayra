@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 
-namespace Ayra.TitleKeyDatabase.N3DS
+namespace Ayra.TitleKeyDatabase.CTR
 {
     public class TitleKeyDatabase
     {

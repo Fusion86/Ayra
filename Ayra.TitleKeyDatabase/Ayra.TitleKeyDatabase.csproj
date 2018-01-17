@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="N3DS\" />
-    <Folder Include="Wii U\" />
+    <Folder Include="CTR\" />
+    <Folder Include="WUP\" />
   </ItemGroup>
 </Project>

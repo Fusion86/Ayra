@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Ayra.TitleKeyDatabase.N3DS
+namespace Ayra.TitleKeyDatabase.CTR
 {
     public class TitleKeyDatabaseEntry : TitleKeyDatabaseEntryBase
     {

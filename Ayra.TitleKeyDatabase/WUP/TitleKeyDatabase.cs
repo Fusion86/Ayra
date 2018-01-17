@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 
-namespace Ayra.TitleKeyDatabase.Wii_U
+namespace Ayra.TitleKeyDatabase.WUP
 {
     public class TitleKeyDatabase
     {

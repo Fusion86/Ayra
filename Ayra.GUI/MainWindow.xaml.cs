@@ -24,7 +24,7 @@ namespace Ayra.GUI
             {
                 await Task.Run(() =>
                 {
-                    bool success = vm.TitleKeyDatabase.UpdateDatabase("http://wiiu.titlekeys.gq/");
+                    bool success = vm.TitleKeyDatabase.UpdateDatabase();
                     vm.OnPropertyChanged(nameof(vm.TitleKeyDatabaseEntries));
 
                     isRefreshingTitleKeyDatabase = false;

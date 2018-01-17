@@ -1,20 +1,21 @@
 ﻿using Ayra.Core.Classes;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Ayra.Core.Models.N3DS
+namespace Ayra.Core.Models.WUP
 {
     public class Game
     {
         public TMD Tmd;
-        //public Ticket Ticket;
-        //public FST Fst;
+        public Ticket Ticket;
+        public FST Fst;
 
         public string LocalPath;
 
         public async static Task<Game> GetFromNus(string titleId)
         {
-            NUSClientN3DS client = new NUSClientN3DS();
+            NUSClientWiiU client = new NUSClientWiiU();
             TMD tmd = await client.DownloadTMD(titleId);
 
             return new Game
@@ -22,6 +23,11 @@ namespace Ayra.Core.Models.N3DS
                 Tmd = tmd,
                 LocalPath = Path.Combine("download", tmd.Header.TitleId.ToString("X8"))
             };
+        }
+
+        public async void DecryptContent()
+        {
+            if (Ticket == null) throw new Exception("No ticket!");
         }
     }
 }

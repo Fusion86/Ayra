@@ -1,4 +1,4 @@
-﻿using Ayra.Core.Models.N3DS;
+﻿using Ayra.Core.Models.CTR;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;

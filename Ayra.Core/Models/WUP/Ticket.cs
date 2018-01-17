@@ -1,9 +1,9 @@
 ﻿using Ayra.Core.Extensions;
-using Ayra.Core.Structs.WiiU;
+using Ayra.Core.Structs.WUP;
 using System;
 using System.Collections.Generic;
 
-namespace Ayra.Core.Models.WiiU
+namespace Ayra.Core.Models.WUP
 {
     public class Ticket
     {

@@ -1,4 +1,5 @@
 ﻿using Ayra.Core.Classes;
+using Ayra.Core.Enums;
 using Ayra.Core.Models;
 using Ayra.TitleKeyDatabase;
 using System;
@@ -16,7 +17,7 @@ namespace Ayra.CLI
             Console.WriteLine($"Ayra.CLI v{Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntryBase)).GetName().Version}\n");
 
-            List<(string Name, Action Action)> menuOptions = new List<(string, Action)>
+            List<(string Name, Func<Task> Action)> menuOptions = new List<(string, Func<Task>)>
             {
                 ( "Download N3DS Games", CLI_N3DS_Download ),
                 ( "Download Wii U Games", CLI_WiiU_Download ),
@@ -41,7 +42,7 @@ namespace Ayra.CLI
             } while (selectedNumber == 0 || selectedNumber > menuOptions.Count);
 
             // Run selected cli method
-            menuOptions[selectedNumber - 1].Action();
+            await menuOptions[selectedNumber - 1].Action();
 
             Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
@@ -49,15 +50,15 @@ namespace Ayra.CLI
 
         #region Nintendo 3DS
 
-        private static async void CLI_N3DS_Download()
+        private static async Task CLI_N3DS_Download()
         {
-            TitleKeyDatabase.N3DS.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.N3DS.TitleKeyDatabase();
+            TitleKeyDatabase.CTR.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.CTR.TitleKeyDatabase();
 
             Console.WriteLine("Downloading Title Keys...");
             titleKeyDatabase.UpdateDatabase();
             Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys\n");
 
-            var selectedGame = (TitleKeyDatabase.N3DS.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
+            var selectedGame = (TitleKeyDatabase.CTR.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
 
             // TODO: ticket stuff
 
@@ -65,23 +66,23 @@ namespace Ayra.CLI
             if (!CLI_GetConfirmation(true)) return;
 
             NUSClientN3DS client = new NUSClientN3DS();
-            await client.DownloadTitle();
+            //await client.DownloadTitle();
         }
 
         #endregion Nintendo 3DS
 
         #region Nintendo Wii U
 
-        private static async void CLI_WiiU_Download()
+        private static async Task CLI_WiiU_Download()
         {
             // Load game database and select game
-            TitleKeyDatabase.Wii_U.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.Wii_U.TitleKeyDatabase();
+            TitleKeyDatabase.WUP.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.WUP.TitleKeyDatabase();
 
             Console.WriteLine("Downloading Title Keys...");
             titleKeyDatabase.UpdateDatabase();
             Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys");
 
-            var selectedGame = (TitleKeyDatabase.Wii_U.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
+            var selectedGame = (TitleKeyDatabase.WUP.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
 
             if (!selectedGame.HasTicket)
             {
@@ -89,9 +90,9 @@ namespace Ayra.CLI
                 return;
             }
 
-            var game = await Core.Models.WiiU.Game.GetFromNus(selectedGame.TitleId);
+            var game = await Core.Models.WUP.Game.GetFromNus(selectedGame.TitleId);
             byte[] ticketData = await selectedGame.DownloadTicket();
-            game.Ticket = Core.Models.WiiU.Ticket.Load(ref ticketData);
+            game.Ticket = Core.Models.WUP.Ticket.Load(ref ticketData);
 
             Console.Write("Download game? [y/n]: ");
             if (!CLI_GetConfirmation(true)) return;
@@ -122,8 +123,8 @@ namespace Ayra.CLI
                         TitleKeyDatabaseEntryBase x = searchResults[i];
 
                         string str = "  " + (i + 1).ToString().PadRight(4);
-                        str += $"{x.Name.Replace("\n", " ")} [{NSoftwareTypes.GetByTitleId(x.TitleId).Name}] [{x.Region}]";
-                        str += $" [{x.TitleId}]";
+                        str += $"{x.Name.Replace("\n", " ")} [{NSoftwareType.GetByTitleId(x.TitleId)?.Name}] [{x.Region}]";
+                        str += $" [{x.TitleId.ToUpper()}]";
 
                         Console.WriteLine(str);
 
@@ -142,7 +143,8 @@ namespace Ayra.CLI
                 }
                 else if (searchResults.Count == 1)
                 {
-                    Console.WriteLine($"Selected {searchResults[0].Name} [{searchResults[0].Region}]");
+                    TitleKeyDatabaseEntryBase x = searchResults[0];
+                    Console.WriteLine($"{x.Name.Replace("\n", " ")} [{NSoftwareType.GetByTitleId(x.TitleId)?.Name}] [{x.Region}]");
                     return searchResults[0];
                 }
                 else
