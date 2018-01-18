@@ -94,7 +94,7 @@ namespace Ayra.Core.Classes
             var method = TMDType.GetMethod("Load");
 
             // The load method requires the first parameter to be a `ref byte[] data`.
-            // The load method MIGHT have more parameters, however they are REQUIRED to be optional, however
+            // The load method MIGHT have more parameters (which are REQUIRED to be optional), however
             // even if they are optional we still need to pass them (as Type.Missing)
             //
             // TL:DR This code below makes sure that we call TMD.Load() with the correct parameters
