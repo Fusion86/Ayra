@@ -60,7 +60,7 @@ namespace Ayra.Core.Structs.CTR
         public UInt16 Fill4;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20, ArraySubType = UnmanagedType.U1)]
-        public byte[] Hash;
+        public byte[] Hash; // SHA-256 Hash of the Content Info Records
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
@@ -73,6 +73,25 @@ namespace Ayra.Core.Structs.CTR
         public UInt16 ContentCommandCount;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20, ArraySubType = UnmanagedType.U1)]
-        public byte[] Hash;
+        public byte[] Hash; // SHA-256 hash of the next k content records that has not been hashed yet
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    public struct _TMD_ContentChunkRecord
+    {
+        [Endian(Endianness.BigEndian)]
+        public UInt32 ContentId;
+
+        [Endian(Endianness.BigEndian)]
+        public UInt16 ContentIndex;
+
+        [Endian(Endianness.BigEndian)]
+        public UInt16 ContentType;
+
+        [Endian(Endianness.BigEndian)]
+        public UInt64 ContentSize;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20, ArraySubType = UnmanagedType.U1)]
+        public byte[] Hash; // SHA-256 hash
     }
 }
