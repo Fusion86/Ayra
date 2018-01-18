@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Ayra.Core.Classes
@@ -90,7 +91,22 @@ namespace Ayra.Core.Classes
 
         private dynamic LoadTMD(ref byte[] data)
         {
-            return TMDType.GetMethod("Load").Invoke(null, new object[] { data });
+            var method = TMDType.GetMethod("Load");
+
+            // The load method requires the first parameter to be a `ref byte[] data`.
+            // The load method MIGHT have more parameters, however they are REQUIRED to be optional, however
+            // even if they are optional we still need to pass them (as Type.Missing)
+            //
+            // TL:DR This code below makes sure that we call TMD.Load() with the correct parameters
+
+            int argc = method.GetParameters().Length;
+            object[] argv = new object[argc];
+            argv[0] = data;
+
+            for (int i = 1; i < argc; i++)
+                argv[i] = Type.Missing;
+
+            return method.Invoke(null, argv);
         }
     }
 }
