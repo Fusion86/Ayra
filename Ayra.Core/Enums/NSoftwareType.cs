@@ -11,7 +11,7 @@ namespace Ayra.Core.Enums
     public class NSoftwareType : Enumeration
     {
         // TODO: Maybe use bitmasks?
-        // e.g Firmware = Normal | CannotExecution | System | RequireBatchUpdate | CanSkipConvertJumpId 
+        // e.g Firmware = Normal | CannotExecution | System | RequireBatchUpdate | CanSkipConvertJumpId
 
         // System Titles
         public static readonly NSoftwareType SystemApplication = new NSoftwareType(new byte[] { 0x00, 0x10 }, "System Application"); // SYSTEM_APPLICATION
@@ -24,7 +24,7 @@ namespace Ayra.Core.Enums
 
         // Application titles
         public static readonly NSoftwareType Application = new NSoftwareType(new byte[] { 0x00, 0x00 }, "Application");
-        public static readonly NSoftwareType DownloadPlayChild = new NSoftwareType(new byte[] { 0x00, 0x01 }, "	Download Play Child");
+        public static readonly NSoftwareType DownloadPlayChild = new NSoftwareType(new byte[] { 0x00, 0x01 }, "Download Play Child");
         public static readonly NSoftwareType Demo = new NSoftwareType(new byte[] { 0x00, 0x02 }, "Demo");
         public static readonly NSoftwareType DLC = new NSoftwareType(new byte[] { 0x00, 0x0C }, "Downloadable Content");
         public static readonly NSoftwareType Update = new NSoftwareType(new byte[] { 0x00, 0x0E }, "Update");

@@ -65,8 +65,12 @@ namespace Ayra.CLI
             Console.Write("Download game? [y/n]: ");
             if (!CLI_GetConfirmation(true)) return;
 
-            NUSClientN3DS client = new NUSClientN3DS();
-            //await client.DownloadTitle();
+            var game = await Core.Models.CTR.Game.GetFromNus(selectedGame.TitleId);
+            // byte[] ticketData = await selectedGame.DownloadTicket();
+            // game.Ticket = Core.Models.WUP.Ticket.Load(ref ticketData);
+
+            // NUSClientN3DS client = new NUSClientN3DS();
+            // await client.DownloadTitle();
         }
 
         #endregion Nintendo 3DS
@@ -90,12 +94,12 @@ namespace Ayra.CLI
                 return;
             }
 
+            Console.Write("Download game? [y/n]: ");
+            if (!CLI_GetConfirmation(true)) return;
+
             var game = await Core.Models.WUP.Game.GetFromNus(selectedGame.TitleId);
             byte[] ticketData = await selectedGame.DownloadTicket();
             game.Ticket = Core.Models.WUP.Ticket.Load(ref ticketData);
-
-            Console.Write("Download game? [y/n]: ");
-            if (!CLI_GetConfirmation(true)) return;
 
             // Download game
             NUSClientWiiU client = new NUSClientWiiU();
