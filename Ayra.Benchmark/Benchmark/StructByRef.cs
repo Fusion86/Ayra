@@ -20,20 +20,36 @@ namespace Ayra.Benchmark.Benchmark
         }
 
         [Benchmark]
-        public void PassByReference()
+        public void WritePassByReference()
         {
-            GetByReference(ref largeArray);
-            //Console.WriteLine(); // Make sure the optimizer doesn't do weird stuff
+            WriteReference(ref largeArray);
         }
 
         [Benchmark]
-        public void PassByValue()
+        public void WritePassByValue()
         {
-            GetByValue(largeArray);
-            //Console.WriteLine(); // Make sure the optimizer doesn't do weird stuff
+            WriteValue(largeArray);
         }
 
-        public void GetByReference(ref byte[] data)
+        [Benchmark]
+        public void ReadPassByReference()
+        {
+            ReadReference(ref largeArray);
+        }
+
+        [Benchmark]
+        public void ReadPassByReadonlyReference()
+        {
+            ReadReference(ref largeArray);
+        }
+
+        [Benchmark]
+        public void ReadPassByValue()
+        {
+            ReadValue(largeArray);
+        }
+
+        public void WriteReference(ref byte[] data)
         {
             for (int i = 0; i < data.Length - 1; i++)
             {
@@ -41,11 +57,41 @@ namespace Ayra.Benchmark.Benchmark
             }
         }
 
-        public void GetByValue(byte[] data)
+        public void WriteValue(byte[] data)
         {
             for (int i = 0; i < data.Length - 1; i++)
             {
                 data[i] = data[i + 1]; // Do some stuff that takes time
+            }
+        }
+
+        public void ReadReference(ref byte[] data)
+        {
+            byte[] x = new byte[data.Length];
+
+            for (int i = 0; i < data.Length - 1; i++)
+            {
+                x[i] = data[i + 1]; // Do some stuff that takes time
+            }
+        }
+
+        public void ReadReference(in byte[] data)
+        {
+            byte[] x = new byte[data.Length];
+
+            for (int i = 0; i < data.Length - 1; i++)
+            {
+                x[i] = data[i + 1]; // Do some stuff that takes time
+            }
+        }
+
+        public void ReadValue(byte[] data)
+        {
+            byte[] x = new byte[data.Length];
+
+            for (int i = 0; i < data.Length - 1; i++)
+            {
+                x[i] = data[i + 1]; // Do some stuff that takes time
             }
         }
     }

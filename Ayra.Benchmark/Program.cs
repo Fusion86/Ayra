@@ -20,9 +20,6 @@ namespace Ayra.Benchmark
 
             foreach (Type t in benchmarks)
                 BenchmarkRunner.Run(t);
-
-            Console.WriteLine("Press enter to exit...");
-            Console.ReadLine();
         }
     }
 }
