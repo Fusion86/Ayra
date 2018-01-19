@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Ayra.Core.Helpers
+namespace Ayra.Core.Helpers.WUP
 {
     public static class CDecrypt
     {

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Ayra.Core.Helpers;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -55,6 +57,36 @@ namespace Ayra.Core.Classes
         }
 
         /// <summary>
+        /// Download title to path
+        /// </summary>
+        /// <param name="tmd"></param>
+        /// <param name="outDir"></param>
+        public async Task DownloadTitle(dynamic tmd, string outDir)
+        {
+            if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
+
+            for (int i = 0; i < tmd.Header.ContentCount; i++)
+            {
+                await DownloadContent(tmd, outDir, i);
+            }
+        }
+
+        /// <summary>
+        /// Download content
+        /// </summary>
+        /// <param name="tmd"></param>
+        /// <param name="outDir"></param>
+        /// <param name="i">Content index</param>
+        public async Task DownloadContent(dynamic tmd, string outDir, int i)
+        {
+            NUSWebClient client = GetNewNUSWebClient();
+            Debug.WriteLine($"[DownloadTitle] Downloading {i + 1}/{tmd.Header.ContentCount} {Utility.GetSizeString((long)tmd.Contents[i].Size)}");
+            string titleId = tmd.Header.TitleId.ToString("X16");
+            string url = nusBaseUrl + titleId + "/" + tmd.Contents[i].ContentId.ToString("X8");
+            await client.DownloadFileTaskAsync(url, Path.Combine(outDir, tmd.Contents[i].ContentId.ToString("X8")));
+        }
+
+        /// <summary>
         /// Download title to path, but now in parallel
         /// </summary>
         /// <param name="titleId"></param>
@@ -86,8 +118,8 @@ namespace Ayra.Core.Classes
             //await Tasks.StartAndWaitAllThrottledAsync(tasks, maxConcurrent);
         }
 
-        public abstract Task DownloadTitle(dynamic tmd, string outDir);
-        public abstract Task DownloadContent(dynamic tmd, string outDir, int i);
+        //public abstract Task DownloadTitle(dynamic tmd, string outDir);
+        //public abstract Task DownloadContent(dynamic tmd, string outDir, int i);
 
         private dynamic LoadTMD(byte[] data)
         {

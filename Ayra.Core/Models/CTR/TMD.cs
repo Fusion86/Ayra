@@ -1,42 +1,21 @@
 ﻿using Ayra.Core.Enums;
 using Ayra.Core.Extensions;
+using Ayra.Core.Structs;
 using Ayra.Core.Structs.CTR;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
 namespace Ayra.Core.Models.CTR
 {
-    public class TMD_SignatureData
-    {
-        public NSignatureType Type;
-        public byte[] Data;
-
-        public static TMD_SignatureData Load(byte[] data)
-        {
-            TMD_SignatureData signature = new TMD_SignatureData();
-
-            byte[] typeData = new byte[4];
-            Buffer.BlockCopy(data, 0, typeData, 0, typeData.Length);
-
-            NSignatureType signatureType = NSignatureType.GetByIdentifier(typeData);
-            signature.Type = signatureType;
-
-            byte[] signatureData = new byte[signatureType.SignatureSize];
-            Buffer.BlockCopy(data, 0, signatureData, 0, signatureData.Length);
-            signature.Data = signatureData;
-
-            return signature;
-        }
-    }
-
     public class TMD
     {
-        public TMD_SignatureData Signature;
+        public SignatureData Signature;
         public _TMD_Header Header;
         public _TMD_ContentInfoRecord[] ContentInfos; // Count = 64
-        public _TMD_ContentChunkRecord[] ContentChunks; // Count = Header.ContentCount
+        public _TMD_ContentRecord[] Contents; // Count = Header.ContentCount
 
         public static TMD Load(byte[] data, bool verifyHash = true)
         {
@@ -44,7 +23,7 @@ namespace Ayra.Core.Models.CTR
             if (verifyHash) sha = SHA256.Create();
 
             TMD tmd = new TMD();
-            tmd.Signature = TMD_SignatureData.Load(data);
+            tmd.Signature = SignatureData.Load(data);
 
             int offset = 4 + tmd.Signature.Type.SignatureSize + tmd.Signature.Type.PaddingSize;
             byte[] headerData = new byte[0xC4]; // 0xC4 = sizeof(_TMD_Header)
@@ -78,13 +57,13 @@ namespace Ayra.Core.Models.CTR
 
             offset += 0x24 * 64; // Set baseoffset to right after the content info records (aka the start of the content chunks)
 
-            tmd.ContentChunks = new _TMD_ContentChunkRecord[tmd.Header.ContentCount];
+            tmd.Contents = new _TMD_ContentRecord[tmd.Header.ContentCount];
             byte[] contentChunkData = new byte[0x30]; // 0x24 = sizeof(_TMD_ContentChunkRecord)
             for (int i = 0; i < tmd.Header.ContentCount; i++)
             {
                 Buffer.BlockCopy(data, offset + i * contentChunkData.Length,
                     contentChunkData, 0, contentChunkData.Length);
-                tmd.ContentChunks[i] = contentChunkData.ToStruct<_TMD_ContentChunkRecord>();
+                tmd.Contents[i] = contentChunkData.ToStruct<_TMD_ContentRecord>();
 
                 // FIXME: Hash verification is not correct
                 //// ContentChunk (single instance) hash verification
@@ -103,6 +82,13 @@ namespace Ayra.Core.Models.CTR
             }
 
             return tmd;
+        }
+
+        public void Save(string path)
+        {
+            //byte[] data = new byte[];
+
+            //File.WriteAllBytes(path, data);
         }
     }
 }

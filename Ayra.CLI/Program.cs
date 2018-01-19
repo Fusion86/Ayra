@@ -69,8 +69,8 @@ namespace Ayra.CLI
             // byte[] ticketData = await selectedGame.DownloadTicket();
             // game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
-            // NUSClientN3DS client = new NUSClientN3DS();
-            // await client.DownloadTitle();
+            NUSClientN3DS client = new NUSClientN3DS();
+            await client.DownloadTitle(game.Tmd, "download");
         }
 
         #endregion Nintendo 3DS

@@ -20,7 +20,7 @@ namespace Ayra.Core.Models.CTR
             return new Game
             {
                 Tmd = tmd,
-                //LocalPath = Path.Combine("download", tmd.Header.TitleId.ToString("X8"))
+                LocalPath = Path.Combine("download", tmd.Header.TitleId.ToString("X8"))
             };
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Ayra.Core.Extensions;
+using Ayra.Core.Structs;
 using Ayra.Core.Structs.WUP;
 using System;
 
