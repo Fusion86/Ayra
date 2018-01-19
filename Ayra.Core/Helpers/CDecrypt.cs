@@ -81,7 +81,7 @@ namespace Ayra.Core.Helpers
 
             //if (Debugger.IsAttached) File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
 
-            FST fst = FST.Load(ref decryptedContent);
+            FST fst = FST.Load(decryptedContent);
             int num = fst.Entries[0].NameOffset;
         }
     }

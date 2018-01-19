@@ -28,7 +28,7 @@ namespace Ayra.Core.Classes
             string url = nusBaseUrl + titleId + "/tmd";
             byte[] data = await client.DownloadDataTaskAsync(new Uri(url));
             if (saveLocal) File.WriteAllBytes(savePath, data);
-            return LoadTMD(ref data);
+            return LoadTMD(data);
         }
 
         /// <summary>
@@ -89,11 +89,11 @@ namespace Ayra.Core.Classes
         public abstract Task DownloadTitle(dynamic tmd, string outDir);
         public abstract Task DownloadContent(dynamic tmd, string outDir, int i);
 
-        private dynamic LoadTMD(ref byte[] data)
+        private dynamic LoadTMD(byte[] data)
         {
             var method = TMDType.GetMethod("Load");
 
-            // The load method requires the first parameter to be a `ref byte[] data`.
+            // The load method requires the first parameter to be a `byte[] data`.
             // The load method MIGHT have more parameters, however they are REQUIRED to be optional, however
             // even if they are optional we still need to pass them (as Type.Missing)
             //

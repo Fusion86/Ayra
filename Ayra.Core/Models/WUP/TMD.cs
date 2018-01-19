@@ -9,7 +9,7 @@ namespace Ayra.Core.Models.WUP
         public _TMD_Header Header;
         public _TMD_ContentRecord[] Contents; // Count = Header.NumContents
 
-        public static TMD Load(ref byte[] data)
+        public static TMD Load(byte[] data)
         {
             TMD tmd = new TMD();
             tmd.Header = data.ToStruct<_TMD_Header>();

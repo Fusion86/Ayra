@@ -12,7 +12,7 @@ namespace Ayra.Core.Models.WUP
         public UInt32 SecondaryHeaderSize => native.SecondaryHeaderSize;
         public UInt32 SecondaryHeaderCount => native.SecondaryHeaderCount;
 
-        public static FST_Header Load(ref byte[] data)
+        public static FST_Header Load(byte[] data)
         {
             return new FST_Header
             {
@@ -25,7 +25,7 @@ namespace Ayra.Core.Models.WUP
     {
         private _FST_SecondaryHeader native;
 
-        public static FST_SecondaryHeader Load(ref byte[] data)
+        public static FST_SecondaryHeader Load(byte[] data)
         {
             return new FST_SecondaryHeader
             {
@@ -51,7 +51,7 @@ namespace Ayra.Core.Models.WUP
             }
         }
 
-        public static FST_FDInfoBase Load(ref byte[] data)
+        public static FST_FDInfoBase Load(byte[] data)
         {
             FST_FDInfoBase info = new FST_FDInfoBase { native = data.ToStruct<_FST_FDInfo>() };
             if (info.IsDirectory) return new FST_DirectoryInfo { native = info.native };
@@ -80,10 +80,10 @@ namespace Ayra.Core.Models.WUP
         public FST_FDInfoBase[] Entries;
         public string[] FilePaths; // And directory path
 
-        public static FST Load(ref byte[] data)
+        public static FST Load(byte[] data)
         {
             FST fst = new FST();
-            fst.Header = FST_Header.Load(ref data);
+            fst.Header = FST_Header.Load(data);
             fst.SecondaryHeaders = new FST_SecondaryHeader[fst.Header.SecondaryHeaderCount];
 
             // 0x20 = sizeof(FST_Header)  and  sizeof(FST_SecondaryHeader)
@@ -94,14 +94,14 @@ namespace Ayra.Core.Models.WUP
             {
                 byte[] secondaryHeaderData = new byte[0x20];
                 Buffer.BlockCopy(data, offset, secondaryHeaderData, 0, secondaryHeaderData.Length);
-                fst.SecondaryHeaders[i] = FST_SecondaryHeader.Load(ref secondaryHeaderData);
+                fst.SecondaryHeaders[i] = FST_SecondaryHeader.Load(secondaryHeaderData);
                 offset += 0x20;
             }
 
             // Read root
             byte[] rootData = new byte[0x10];
             Buffer.BlockCopy(data, offset, rootData, 0, rootData.Length);
-            FST_DirectoryInfo rootEntry = FST_FDInfoBase.Load(ref rootData) as FST_DirectoryInfo;
+            FST_DirectoryInfo rootEntry = FST_FDInfoBase.Load(rootData) as FST_DirectoryInfo;
 
             Debug.WriteLine($"[FST] Found {rootEntry.FileCount} files/directories");
 
@@ -112,7 +112,7 @@ namespace Ayra.Core.Models.WUP
             {
                 byte[] entryData = new byte[0x10]; // NOTE: Look carefully ++i instead of i++
                 Buffer.BlockCopy(data, offset + i * 0x10, entryData, 0, entryData.Length);
-                fst.Entries[i] = FST_FDInfoBase.Load(ref entryData);
+                fst.Entries[i] = FST_FDInfoBase.Load(entryData);
             }
 
             #region Build file paths

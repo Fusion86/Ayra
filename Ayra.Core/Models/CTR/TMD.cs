@@ -13,7 +13,7 @@ namespace Ayra.Core.Models.CTR
         public NSignatureType Type;
         public byte[] Data;
 
-        public static TMD_SignatureData Load(ref byte[] data)
+        public static TMD_SignatureData Load(byte[] data)
         {
             TMD_SignatureData signature = new TMD_SignatureData();
 
@@ -38,13 +38,13 @@ namespace Ayra.Core.Models.CTR
         public _TMD_ContentInfoRecord[] ContentInfos; // Count = 64
         public _TMD_ContentChunkRecord[] ContentChunks; // Count = Header.ContentCount
 
-        public static TMD Load(ref byte[] data, bool verifyHash = true)
+        public static TMD Load(byte[] data, bool verifyHash = true)
         {
             SHA256 sha = null;
             if (verifyHash) sha = SHA256.Create();
 
             TMD tmd = new TMD();
-            tmd.Signature = TMD_SignatureData.Load(ref data);
+            tmd.Signature = TMD_SignatureData.Load(data);
 
             int offset = 4 + tmd.Signature.Type.SignatureSize + tmd.Signature.Type.PaddingSize;
             byte[] headerData = new byte[0xC4]; // 0xC4 = sizeof(_TMD_Header)

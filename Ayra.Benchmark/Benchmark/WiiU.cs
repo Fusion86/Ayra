@@ -9,7 +9,7 @@ using System.Net;
 namespace Ayra.Benchmark.Benchmark
 {
     [ClrJob, CoreJob, MonoJob]
-    public class Stuff : IBenchmark
+    public class WiiU : IBenchmark
     {
         private const string filePath = "tmd";
         private const string ticketPath = "cetk";
@@ -38,24 +38,24 @@ namespace Ayra.Benchmark.Benchmark
         public void LoadTMD()
         {
             byte[] data = File.ReadAllBytes(filePath);
-            TMD tmd = TMD.Load(ref data);
+            TMD tmd = TMD.Load(data);
         }
 
         [Benchmark]
         public void LoadTicket()
         {
             byte[] data = File.ReadAllBytes(ticketPath);
-            Ticket ticket = Ticket.Load(ref data);
+            Ticket ticket = Ticket.Load(data);
         }
 
         [Benchmark]
         public void DecryptGame()
         {
             byte[] data = File.ReadAllBytes(filePath);
-            TMD tmd = TMD.Load(ref data);
+            TMD tmd = TMD.Load(data);
 
             data = File.ReadAllBytes(ticketPath);
-            Ticket ticket = Ticket.Load(ref data);
+            Ticket ticket = Ticket.Load(data);
 
             CDecrypt.DecryptContents(tmd, ticket, gamePath);
         }

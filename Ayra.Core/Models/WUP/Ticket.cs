@@ -14,7 +14,7 @@ namespace Ayra.Core.Models.WUP
             Tickets = entries.ToArray();
         }
 
-        public static Ticket Load(ref byte[] data)
+        public static Ticket Load(byte[] data)
         {
             // Size:
             // ===
