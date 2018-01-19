@@ -40,7 +40,7 @@ namespace Ayra.Benchmark.Benchmark
         [Benchmark]
         public void ReadPassByReadonlyReference()
         {
-            ReadReference(ref largeArray);
+            ReadonlyReference(in largeArray);
         }
 
         [Benchmark]
@@ -75,7 +75,7 @@ namespace Ayra.Benchmark.Benchmark
             }
         }
 
-        public void ReadReference(in byte[] data)
+        public void ReadonlyReference(in byte[] data)
         {
             byte[] x = new byte[data.Length];
 
