@@ -7,7 +7,7 @@ namespace Ayra.Core.Models.CTR
     public class Game
     {
         public TMD Tmd;
-        //public Ticket Ticket;
+        public Ticket Ticket;
         //public FST Fst;
 
         public string LocalPath;

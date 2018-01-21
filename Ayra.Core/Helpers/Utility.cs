@@ -1,4 +1,6 @@
-﻿namespace Ayra.Core.Helpers
+﻿using System.Net;
+
+namespace Ayra.Core.Helpers
 {
     public static class Utility
     {
@@ -49,6 +51,30 @@
             }
             readable = (readable / 1024);
             return readable.ToString("0.### ") + suffix;
+        }
+
+        /// <summary>
+        /// Get response status code from HEAD request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static HttpStatusCode GetUrlResponseStatusCode(string url)
+        {
+            HttpStatusCode result = default;
+
+            WebRequest request = WebRequest.Create(url);
+            request.Method = "HEAD";
+
+            using (var response = request.GetResponse() as HttpWebResponse)
+            {
+                if (response != null)
+                {
+                    result = response.StatusCode;
+                    response.Close();
+                }
+            }
+
+            return result;
         }
     }
 }

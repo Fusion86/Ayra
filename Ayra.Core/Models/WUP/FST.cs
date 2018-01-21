@@ -1,4 +1,5 @@
 ﻿using Ayra.Core.Extensions;
+using Ayra.Core.Logging;
 using Ayra.Core.Structs.WUP;
 using System;
 using System.Diagnostics;
@@ -75,6 +76,8 @@ namespace Ayra.Core.Models.WUP
 
     public class FST
     {
+        private static readonly ILog Logger = LogProvider.For<FST>();
+
         public FST_Header Header;
         public FST_SecondaryHeader[] SecondaryHeaders;
         public FST_FDInfoBase[] Entries;
@@ -103,7 +106,7 @@ namespace Ayra.Core.Models.WUP
             Buffer.BlockCopy(data, offset, rootData, 0, rootData.Length);
             FST_DirectoryInfo rootEntry = FST_FDInfoBase.Load(rootData) as FST_DirectoryInfo;
 
-            Debug.WriteLine($"[FST] Found {rootEntry.FileCount} files/directories");
+            Logger.Info($"Found {rootEntry.FileCount} files/directories");
 
             // Read all entries (including root again)
             fst.Entries = new FST_FDInfoBase[rootEntry.FileCount];
@@ -151,7 +154,7 @@ namespace Ayra.Core.Models.WUP
                         throw new Exception("Level error");
                     }
 
-                    // Debug.WriteLine($"[FST] Found directory '{fileNames[i]}' at level {level}");
+                    Logger.Info($"Found directory '{fileNames[i]}' at level {level}");
                 }
 
                 string path = "";
@@ -165,7 +168,7 @@ namespace Ayra.Core.Models.WUP
                 fst.FilePaths[i] = path;
 
                 string type = fst.Entries[i].IsDirectory ? "directory" : "file";
-                Debug.WriteLine($"[FST] Found {type} '{path}'");
+                Logger.Info($"[FST] Found {type} '{path}'");
             }
 
             #endregion Build file paths

@@ -17,7 +17,7 @@ namespace Ayra.Core.Models.WUP
         {
             NUSClientWiiU client = new NUSClientWiiU();
             TMD tmd = await client.DownloadTMD(titleId);
-
+            
             return new Game
             {
                 Tmd = tmd,

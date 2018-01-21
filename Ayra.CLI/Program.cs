@@ -1,6 +1,6 @@
 ﻿using Ayra.Core.Classes;
 using Ayra.Core.Enums;
-using Ayra.Core.Models;
+using Ayra.Core.Helpers.CTR;
 using Ayra.TitleKeyDatabase;
 using System;
 using System.Collections.Generic;
@@ -19,8 +19,9 @@ namespace Ayra.CLI
 
             List<(string Name, Func<Task> Action)> menuOptions = new List<(string, Func<Task>)>
             {
-                ( "Download N3DS Games", CLI_N3DS_Download ),
-                ( "Download Wii U Games", CLI_WiiU_Download ),
+                ( "Download N3DS game (TitleKeyDatabase)", CLI_N3DS_Download_TKDB ),
+                ( "Download Wii U game (TitleKeyDatabase)", CLI_WiiU_Download_TKDB ),
+                ( "Download N3DS/Wii U game by Title ID", CLI_3DS_WiU_Download_TitleId),
             };
 
             Console.WriteLine("Menu:");
@@ -50,7 +51,7 @@ namespace Ayra.CLI
 
         #region Nintendo 3DS
 
-        private static async Task CLI_N3DS_Download()
+        private static async Task CLI_N3DS_Download_TKDB()
         {
             TitleKeyDatabase.CTR.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.CTR.TitleKeyDatabase();
 
@@ -65,19 +66,25 @@ namespace Ayra.CLI
             Console.Write("Download game? [y/n]: ");
             if (!CLI_GetConfirmation(true)) return;
 
+            Console.Write("\nMake CIA? [y/n]: ");
+            bool makeCia = CLI_GetConfirmation(true);
+
             var game = await Core.Models.CTR.Game.GetFromNus(selectedGame.TitleId);
             // byte[] ticketData = await selectedGame.DownloadTicket();
             // game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
             NUSClientN3DS client = new NUSClientN3DS();
             await client.DownloadTitle(game.Tmd, "download");
+
+            if (makeCia)
+                await MakeCdnCia.MakeCia(game.Tmd, game.Ticket, "download", "game.cia");
         }
 
         #endregion Nintendo 3DS
 
         #region Nintendo Wii U
 
-        private static async Task CLI_WiiU_Download()
+        private static async Task CLI_WiiU_Download_TKDB()
         {
             // Load game database and select game
             TitleKeyDatabase.WUP.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.WUP.TitleKeyDatabase();
@@ -107,6 +114,22 @@ namespace Ayra.CLI
         }
 
         #endregion Nintendo Wii U
+
+        private static async Task CLI_3DS_WiU_Download_TitleId()
+        {
+            string titleId = null;
+            while (true)
+            {
+                Console.Write("Enter 16 character Title ID: ");
+                titleId = Console.ReadLine().TrimEnd('\n');
+                Console.WriteLine();
+
+                if (titleId.Length != 16)
+                {
+                    Console.WriteLine("Invalid length!");
+                }
+            }
+        }
 
         #region Shared
 
@@ -158,6 +181,11 @@ namespace Ayra.CLI
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="requireValidAnswer">Require either y, yes, n or no as answer. If false then return false on invalid answer.</param>
+        /// <returns></returns>
         private static bool CLI_GetConfirmation(bool requireValidAnswer = false)
         {
             while(true)

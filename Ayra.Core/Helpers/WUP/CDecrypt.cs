@@ -1,6 +1,7 @@
 ﻿// Based on https://github.com/crediar/cdecrypt/blob/master/main.cpp
 
 using Ayra.Core.Data;
+using Ayra.Core.Logging;
 using Ayra.Core.Models.WUP;
 using System;
 using System.Diagnostics;
@@ -9,15 +10,17 @@ using System.Security.Cryptography;
 
 namespace Ayra.Core.Helpers.WUP
 {
-    public static class CDecrypt
+    public class CDecrypt
     {
+        private static readonly ILog Logger = LogProvider.For<CDecrypt>();
+
         public static void DecryptContents(TMD tmd, Ticket ticket, string path)
         {
-            Debug.WriteLine("[DecryptContents] TMD version: " + tmd.Header.Version);
+            Logger.Info("TMD version: " + tmd.Header.Version);
             if (tmd.Header.Version != 1) throw new NotSupportedException();
 
-            Debug.WriteLine("[DecryptContents] Title version: " + tmd.Header.TitleVersion);
-            Debug.WriteLine("[DecryptContents] Content count: " + tmd.Header.ContentCount);
+            Logger.Info("Title version: " + tmd.Header.TitleVersion);
+            Logger.Info("Content count: " + tmd.Header.ContentCount);
 
             //
             // AES setup

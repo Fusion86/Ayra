@@ -1,10 +1,8 @@
-﻿using Ayra.Core.Enums;
-using Ayra.Core.Extensions;
+﻿using Ayra.Core.Extensions;
+using Ayra.Core.Logging;
 using Ayra.Core.Structs;
 using Ayra.Core.Structs.CTR;
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
@@ -12,6 +10,8 @@ namespace Ayra.Core.Models.CTR
 {
     public class TMD
     {
+        private static readonly ILog Logger = LogProvider.For<TMD>();
+
         public SignatureData Signature;
         public _TMD_Header Header;
         public _TMD_ContentInfoRecord[] ContentInfos; // Count = 64
@@ -41,7 +41,7 @@ namespace Ayra.Core.Models.CTR
                 byte[] hash = sha.ComputeHash(contentInfoRecordsData);
 
                 if (hash.SequenceEqual(tmd.Header.Hash))
-                    Debug.WriteLine("[TMD.Load] Correct ContentInfoRecords hash!");
+                    Logger.Info("Correct ContentInfoRecords hash!");
                 else
                     throw new Exception("ContentInfoRecords hash is not valid!");
             }
@@ -75,7 +75,7 @@ namespace Ayra.Core.Models.CTR
                 //    byte[] hash = sha.ComputeHash(contentChunkData);
 
                 //    if (hash.SequenceEqual(tmd.ContentChunks[i].Hash))
-                //        Debug.WriteLine($"[TMD.Load] Correct ContentChunk[{i}] hash!");
+                //        Logger.Info($"Correct ContentChunk[{i}] hash!");
                 //    else
                 //        throw new Exception($"ContentChunk[{i}] hash is not valid!");
                 //}

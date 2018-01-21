@@ -1,4 +1,5 @@
 ﻿using Ayra.Core.Helpers;
+using Ayra.Core.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +11,8 @@ namespace Ayra.Core.Classes
 {
     public abstract class NUSClient
     {
+        private static readonly ILog Logger = LogProvider.For<NUSClient>();
+
         protected abstract string nusBaseUrl { get; }
         protected abstract string nusUserAgent { get; }
         protected abstract Type TMDType { get; }
@@ -51,7 +54,7 @@ namespace Ayra.Core.Classes
         /// <param name="titleId"></param>
         public async Task DownloadTitle(string titleId, string path)
         {
-            Debug.WriteLine($"[DownloadTitle] Downloading TMD for TitleID {titleId}");
+            Logger.Info($"Downloading TMD for TitleID {titleId}");
             dynamic tmd = await DownloadTMD(titleId);
             await DownloadTitle(tmd, path);
         }
@@ -80,7 +83,7 @@ namespace Ayra.Core.Classes
         public async Task DownloadContent(dynamic tmd, string outDir, int i)
         {
             NUSWebClient client = GetNewNUSWebClient();
-            Debug.WriteLine($"[DownloadTitle] Downloading {i + 1}/{tmd.Header.ContentCount} {Utility.GetSizeString((long)tmd.Contents[i].Size)}");
+            Logger.Info($"Downloading {i + 1}/{tmd.Header.ContentCount} {Utility.GetSizeString((long)tmd.Contents[i].Size)}");
             string titleId = tmd.Header.TitleId.ToString("X16");
             string url = nusBaseUrl + titleId + "/" + tmd.Contents[i].ContentId.ToString("X8");
             await client.DownloadFileTaskAsync(url, Path.Combine(outDir, tmd.Contents[i].ContentId.ToString("X8")));
@@ -92,7 +95,7 @@ namespace Ayra.Core.Classes
         /// <param name="titleId"></param>
         public async Task DownloadTitleParallel(string titleId, string path, int maxConcurrent = 4)
         {
-            Debug.WriteLine($"[DownloadTitle] Downloading TMD for TitleID {titleId}");
+            Logger.Info($"Downloading TMD for TitleID {titleId}");
             dynamic tmd = await DownloadTMD(titleId);
             await DownloadTitleParallel(tmd, path, maxConcurrent);
         }
