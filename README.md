@@ -23,3 +23,4 @@ Open source Nintendo Update Server downloader and decryptor, or rather, that is 
 - https://github.com/profi200/Project_CTR
 - https://github.com/Tiger21820/ctr_toolkit
 - https://github.com/HouseBreaker/Shameless
+- https://github.com/crediar/cdecrypt/blob/master/main.cpp
