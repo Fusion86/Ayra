@@ -66,7 +66,7 @@ namespace Ayra.CLI
             Console.Write("Download game? [y/n]: ");
             if (!CLI_GetConfirmation(true)) return;
 
-            Console.Write("\nMake CIA? [y/n]: ");
+            Console.Write("Make CIA? [y/n]: ");
             bool makeCia = CLI_GetConfirmation(true);
 
             var game = await Core.Models.CTR.Game.GetFromNus(selectedGame.TitleId);
@@ -182,7 +182,7 @@ namespace Ayra.CLI
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="requireValidAnswer">Require either y, yes, n or no as answer. If false then return false on invalid answer.</param>
         /// <returns></returns>
