@@ -1,9 +1,5 @@
-﻿using Ayra.Core.Helpers;
-using Ayra.Core.Models.WUP;
+﻿using Ayra.Core.Models.WUP;
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Ayra.Core.Classes
 {

@@ -79,7 +79,6 @@ namespace Ayra.CLI
             await client.DownloadTitle(game.Tmd, "download");
             Console.WriteLine(" Done!");
 
-
             if (makeCia)
                 MakeCdnCia.MakeCia(game.Tmd, game.Ticket, "download", "game.cia");
         }
@@ -202,7 +201,7 @@ namespace Ayra.CLI
         /// <returns></returns>
         private static bool CLI_GetConfirmation(bool requireValidAnswer = false)
         {
-            while(true)
+            while (true)
             {
                 string answer = Console.ReadLine().ToLower();
 

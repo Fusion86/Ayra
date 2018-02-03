@@ -1,6 +1,5 @@
 ﻿using Ayra.Core.Helpers;
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Ayra.Core.Structs.CTR

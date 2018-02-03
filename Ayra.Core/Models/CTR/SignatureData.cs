@@ -1,6 +1,5 @@
 ﻿using Ayra.Core.Enums;
 using System;
-using System.IO;
 
 namespace Ayra.Core.Models.CTR
 {

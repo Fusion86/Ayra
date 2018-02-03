@@ -2,7 +2,6 @@
 using Ayra.Core.Logging;
 using Ayra.Core.Structs.WUP;
 using System;
-using System.Diagnostics;
 
 namespace Ayra.Core.Models.WUP
 {

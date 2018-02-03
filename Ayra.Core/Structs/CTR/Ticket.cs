@@ -1,8 +1,4 @@
-﻿using Ayra.Core.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Runtime.InteropServices;
 
 namespace Ayra.Core.Structs.CTR
 {

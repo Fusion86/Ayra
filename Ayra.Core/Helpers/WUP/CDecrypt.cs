@@ -4,7 +4,6 @@ using Ayra.Core.Data;
 using Ayra.Core.Logging;
 using Ayra.Core.Models.WUP;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 

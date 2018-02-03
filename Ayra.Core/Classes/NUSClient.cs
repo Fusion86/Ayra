@@ -1,10 +1,7 @@
 ﻿using Ayra.Core.Helpers;
 using Ayra.Core.Logging;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Ayra.Core.Classes

@@ -1,9 +1,4 @@
-﻿using Ayra.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ayra.Core.Models.CTR
+﻿namespace Ayra.Core.Models.CTR
 {
     public class Ticket
     {
@@ -11,7 +6,6 @@ namespace Ayra.Core.Models.CTR
 
         public void Save(string path)
         {
-
         }
     }
 }
