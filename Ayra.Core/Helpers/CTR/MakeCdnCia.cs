@@ -8,9 +8,9 @@ namespace Ayra.Core.Helpers.CTR
 {
     public static class MakeCdnCia
     {
-        public static async Task MakeCia(TMD tmd, Ticket ticket, string contentPath, string ciaPath)
+        public static void MakeCia(TMD tmd, Ticket ticket, string contentPath, string ciaPath)
         {
-
+            throw new NotImplementedException();
         }
     }
 }

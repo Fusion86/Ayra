@@ -1,6 +1,6 @@
 # Ayra
 
-Open source Nintendo Update Server downloader and decryptor.
+Open source Nintendo Update Server downloader and decryptor, or rather, that is what it is going to be when it is finished (probably never).
 
 
 ## Codenames
@@ -9,6 +9,7 @@ Open source Nintendo Update Server downloader and decryptor.
 |----------|----------------|
 | CTR      | Nintendo 3DS   |
 | WUP      | Nintendo Wii U |
+
 
 ## Resources used
 

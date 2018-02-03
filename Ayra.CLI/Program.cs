@@ -1,6 +1,7 @@
 ﻿using Ayra.Core.Classes;
 using Ayra.Core.Enums;
 using Ayra.Core.Helpers.CTR;
+using Ayra.Core.Helpers.WUP;
 using Ayra.TitleKeyDatabase;
 using System;
 using System.Collections.Generic;
@@ -69,15 +70,18 @@ namespace Ayra.CLI
             Console.Write("Make CIA? [y/n]: ");
             bool makeCia = CLI_GetConfirmation(true);
 
+            Console.Write("Downloading game, this might take a while...");
             var game = await Core.Models.CTR.Game.GetFromNus(selectedGame.TitleId);
             // byte[] ticketData = await selectedGame.DownloadTicket();
             // game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
             NUSClientN3DS client = new NUSClientN3DS();
             await client.DownloadTitle(game.Tmd, "download");
+            Console.WriteLine(" Done!");
+
 
             if (makeCia)
-                await MakeCdnCia.MakeCia(game.Tmd, game.Ticket, "download", "game.cia");
+                MakeCdnCia.MakeCia(game.Tmd, game.Ticket, "download", "game.cia");
         }
 
         #endregion Nintendo 3DS
@@ -104,6 +108,10 @@ namespace Ayra.CLI
             Console.Write("Download game? [y/n]: ");
             if (!CLI_GetConfirmation(true)) return;
 
+            Console.Write("Decrypt contents? [y/n]: ");
+            bool decryptContents = CLI_GetConfirmation(true);
+
+            Console.Write("Downloading game, this might take a while...");
             var game = await Core.Models.WUP.Game.GetFromNus(selectedGame.TitleId);
             byte[] ticketData = await selectedGame.DownloadTicket();
             game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
@@ -111,6 +119,10 @@ namespace Ayra.CLI
             // Download game
             NUSClientWiiU client = new NUSClientWiiU();
             await client.DownloadTitle(game.Tmd, "download");
+            Console.WriteLine(" Done!");
+
+            if (decryptContents)
+                CDecrypt.DecryptContents(game.Tmd, game.Ticket, "download");
         }
 
         #endregion Nintendo Wii U
@@ -128,6 +140,8 @@ namespace Ayra.CLI
                 {
                     Console.WriteLine("Invalid length!");
                 }
+
+                throw new NotImplementedException();
             }
         }
 
