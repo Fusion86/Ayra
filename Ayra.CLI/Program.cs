@@ -30,10 +30,16 @@ namespace Ayra.CLI
 
             // Load TitleKeys (if possible)
             if (File.Exists(titleKeyFile3ds))
+            {
                 titleKeyDatabase3ds.LoadDatabase(titleKeyFile3ds);
+                Console.WriteLine("Nintendo 3DS TitleKey count: " + titleKeyDatabase3ds.Entries.Count);
+            }
 
             if (File.Exists(titleKeyFileWiiU))
+            {
                 titleKeyDatabaseWiiU.LoadDatabase(titleKeyFileWiiU);
+                Console.WriteLine("Nintendo Wii U TitleKey count: " + titleKeyDatabaseWiiU.Entries.Count);
+            }
 
             // Menu options
             List<(string Name, Func<Task> Action)> menuOptions = new List<(string, Func<Task>)>
@@ -45,21 +51,22 @@ namespace Ayra.CLI
                 ( "Download TitleKeys from that one site", CLI_TKDB_Download ),
             };
 
-            Console.WriteLine("Menu:");
+            Console.WriteLine("\nMenu:");
             for (int i = 0; i < menuOptions.Count; i++)
             {
                 string str = "  " + (i + 1).ToString().PadRight(4);
                 str += menuOptions[i].Name;
                 Console.WriteLine(str);
-
-                if (i == menuOptions.Count - 1) Console.WriteLine();
             }
+            Console.WriteLine("  q   Quit\n");
 
             int selectedNumber = 0;
             do
             {
-                Console.Write("Enter number: ");
+                Console.Write("Enter option: ");
                 string str = Console.ReadLine();
+                if (str.ToCharArray()[0] == 'q') return;
+
                 int.TryParse(str, out selectedNumber);
             } while (selectedNumber == 0 || selectedNumber > menuOptions.Count);
 
