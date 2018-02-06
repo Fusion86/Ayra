@@ -26,20 +26,14 @@ namespace Ayra.CLI
             Ayra.Core.Logging.LogProvider.SetCurrentLogProvider(new ColoredConsoleLogProvider());
 
             Console.WriteLine($"Ayra.CLI v{Assembly.GetExecutingAssembly().GetName().Version}");
-            Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntryBase)).GetName().Version}\n");
+            Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntryBase)).GetName().Version}");
 
             // Load TitleKeys (if possible)
             if (File.Exists(titleKeyFile3ds))
-            {
                 titleKeyDatabase3ds.LoadDatabase(titleKeyFile3ds);
-                Console.WriteLine("Nintendo 3DS TitleKey count: " + titleKeyDatabase3ds.Entries.Count);
-            }
 
             if (File.Exists(titleKeyFileWiiU))
-            {
                 titleKeyDatabaseWiiU.LoadDatabase(titleKeyFileWiiU);
-                Console.WriteLine("Nintendo Wii U TitleKey count: " + titleKeyDatabaseWiiU.Entries.Count);
-            }
 
             // Menu options
             List<(string Name, Func<Task> Action)> menuOptions = new List<(string, Func<Task>)>
@@ -50,6 +44,10 @@ namespace Ayra.CLI
                 ( "Decrypt Wii U game", CLI_WiiU_Decrypt ),
                 ( "Download TitleKeys from that one site", CLI_TKDB_Download ),
             };
+
+        menu:
+            Console.WriteLine("\nNintendo 3DS TitleKey count: " + titleKeyDatabase3ds.Entries.Count);
+            Console.WriteLine("Nintendo Wii U TitleKey count: " + titleKeyDatabaseWiiU.Entries.Count);
 
             Console.WriteLine("\nMenu:");
             for (int i = 0; i < menuOptions.Count; i++)
@@ -65,7 +63,7 @@ namespace Ayra.CLI
             {
                 Console.Write("Enter option: ");
                 string str = Console.ReadLine();
-                if (str.ToCharArray()[0] == 'q') return;
+                if (str.ToCharArray()[0] == 'q') return; // Exit
 
                 int.TryParse(str, out selectedNumber);
             } while (selectedNumber == 0 || selectedNumber > menuOptions.Count);
@@ -73,8 +71,7 @@ namespace Ayra.CLI
             // Run selected cli method
             await menuOptions[selectedNumber - 1].Action();
 
-            Console.WriteLine("Press enter to exit...");
-            Console.ReadLine();
+            goto menu;
         }
 
         #region Nintendo 3DS
