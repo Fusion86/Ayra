@@ -12,8 +12,14 @@ using System.IO;
 
 namespace Ayra.CLI
 {
-    internal class Program
+    internal static class Program
     {
+        const string titleKeyFile3ds = "TitleKeys3DS.json";
+        const string titleKeyFileWiiU = "TitleKeyWiiU.json";
+
+        static TitleKeyDatabase.CTR.TitleKeyDatabase titleKeyDatabase3ds = new TitleKeyDatabase.CTR.TitleKeyDatabase();
+        static TitleKeyDatabase.WUP.TitleKeyDatabase titleKeyDatabaseWiiU = new TitleKeyDatabase.WUP.TitleKeyDatabase();
+
         private static async Task Main(string[] args)
         {
             // Setup Ayra.Core logger
@@ -22,12 +28,21 @@ namespace Ayra.CLI
             Console.WriteLine($"Ayra.CLI v{Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntryBase)).GetName().Version}\n");
 
+            // Load TitleKeys (if possible)
+            if (File.Exists(titleKeyFile3ds))
+                titleKeyDatabase3ds.LoadDatabase(titleKeyFile3ds);
+
+            if (File.Exists(titleKeyFileWiiU))
+                titleKeyDatabaseWiiU.LoadDatabase(titleKeyFileWiiU);
+
+            // Menu options
             List<(string Name, Func<Task> Action)> menuOptions = new List<(string, Func<Task>)>
             {
-                ( "Download N3DS game (TitleKeyDatabase)", CLI_N3DS_Download_TKDB ),
-                ( "Download Wii U game (TitleKeyDatabase)", CLI_WiiU_Download_TKDB ),
-                ( "Download N3DS/Wii U game by Title ID", CLI_3DS_WiU_Download_TitleId),
-                ( "Decrypt Wii U game", CLI_WiiU_Decrypt)
+                ( "Download N3DS game", CLI_N3DS_Download ),
+                ( "Download Wii U game", CLI_WiiU_Download ),
+                ( "Download N3DS/Wii U game by Title ID", CLI_3DS_WiU_Download_TitleId ),
+                ( "Decrypt Wii U game", CLI_WiiU_Decrypt ),
+                ( "Download TitleKeys from that one site", CLI_TKDB_Download ),
             };
 
             Console.WriteLine("Menu:");
@@ -57,15 +72,15 @@ namespace Ayra.CLI
 
         #region Nintendo 3DS
 
-        private static async Task CLI_N3DS_Download_TKDB()
+        private static async Task CLI_N3DS_Download()
         {
-            TitleKeyDatabase.CTR.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.CTR.TitleKeyDatabase();
+            if (titleKeyDatabase3ds.Entries.Count == 0)
+            {
+                Console.WriteLine("No TitleKeys available! Download or import them from the main menu.");
+                return;
+            }
 
-            Console.WriteLine("Downloading Title Keys...");
-            titleKeyDatabase.UpdateDatabase();
-            Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys\n");
-
-            var selectedGame = (TitleKeyDatabase.CTR.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
+            var selectedGame = (TitleKeyDatabase.CTR.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase3ds.Entries);
 
             // TODO: ticket stuff
 
@@ -92,16 +107,15 @@ namespace Ayra.CLI
 
         #region Nintendo Wii U
 
-        private static async Task CLI_WiiU_Download_TKDB()
+        private static async Task CLI_WiiU_Download()
         {
-            // Load game database and select game
-            TitleKeyDatabase.WUP.TitleKeyDatabase titleKeyDatabase = new TitleKeyDatabase.WUP.TitleKeyDatabase();
+            if (titleKeyDatabaseWiiU.Entries.Count == 0)
+            {
+                Console.WriteLine("No TitleKeys available! Download or import them from the main menu.");
+                return;
+            }
 
-            Console.WriteLine("Downloading Title Keys...");
-            titleKeyDatabase.UpdateDatabase();
-            Console.WriteLine($"Downloaded {titleKeyDatabase.Entries.Count} Title Keys");
-
-            var selectedGame = (TitleKeyDatabase.WUP.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabase.Entries);
+            var selectedGame = (TitleKeyDatabase.WUP.TitleKeyDatabaseEntry)CLI_SelectGame(titleKeyDatabaseWiiU.Entries);
 
             if (!selectedGame.HasTicket)
             {
@@ -197,6 +211,21 @@ namespace Ayra.CLI
 
                 throw new NotImplementedException();
             }
+        }
+
+        private static async Task CLI_TKDB_Download()
+        {
+            Console.WriteLine("You can save the downloaded TitleKeys so that this program can autoamtically import them the next time you run it.\nIf you don't save them now then you'll need to download them again after you close this program.");
+            Console.Write("Save TitleKeys? [y/n]: ");
+            bool storeLocalCopy = CLI_GetConfirmation();
+
+            Console.WriteLine("Downloading TitleKeys for Nintendo 3DS...");
+            titleKeyDatabase3ds.UpdateDatabase(storeLocalCopy, titleKeyFile3ds);
+            Console.WriteLine($"Downloaded {titleKeyDatabase3ds.Entries.Count} Title Keys");
+
+            Console.WriteLine("Downloading TitleKeys for Nintendo Wii U...");
+            titleKeyDatabaseWiiU.UpdateDatabase(storeLocalCopy, titleKeyFileWiiU);
+            Console.WriteLine($"Downloaded {titleKeyDatabaseWiiU.Entries.Count} Title Keys");
         }
 
         #region Shared

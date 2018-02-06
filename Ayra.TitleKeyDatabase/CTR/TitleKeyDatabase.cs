@@ -21,13 +21,13 @@ namespace Ayra.TitleKeyDatabase.CTR
         /// </summary>
         /// <param name="storeLocalCopy"></param>
         /// <returns></returns>
-        public bool UpdateDatabase(bool storeLocalCopy = false)
+        public bool UpdateDatabase(bool storeLocalCopy = false, string storeLocalCopyName = "TitleKeyDatabase.json")
         {
             try
             {
                 string json = new WebClient().DownloadString(url + "/json");
 
-                if (storeLocalCopy) File.WriteAllText("TitleKeyDatabase.json", json);
+                if (storeLocalCopy) File.WriteAllText(storeLocalCopyName, json);
                 entries = ParseJson(json);
 
                 return true;
@@ -37,6 +37,12 @@ namespace Ayra.TitleKeyDatabase.CTR
                 Debug.WriteLine(ex.Message);
                 return false;
             }
+        }
+
+        public void SaveDatabase(string path)
+        {
+            string json = JsonConvert.SerializeObject(Entries);
+            File.WriteAllText(path, json);
         }
 
         /// <summary>
