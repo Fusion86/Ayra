@@ -41,7 +41,7 @@ namespace Ayra.Core.Models.CTR
                 byte[] hash = sha.ComputeHash(contentInfoRecordsData);
 
                 if (hash.SequenceEqual(tmd.Header.Hash))
-                    Logger.Info("Correct ContentInfoRecords hash!");
+                    Logger.Debug("Correct ContentInfoRecords hash!");
                 else
                     throw new Exception("ContentInfoRecords hash is not valid!");
             }
