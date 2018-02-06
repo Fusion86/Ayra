@@ -13,11 +13,16 @@ namespace Ayra.Core.Models.WUP
 
         public string LocalPath;
 
+        /// <summary>
+        /// Download TMD from NUS and create a new game model
+        /// </summary>
+        /// <returns>New game model</returns>
+        /// <param name="titleId"></param>
         public async static Task<Game> GetFromNus(string titleId)
         {
             NUSClientWiiU client = new NUSClientWiiU();
             TMD tmd = await client.DownloadTMD(titleId);
-            
+
             return new Game
             {
                 Tmd = tmd,
@@ -28,6 +33,22 @@ namespace Ayra.Core.Models.WUP
         public async void DecryptContent()
         {
             if (Ticket == null) throw new Exception("No ticket!");
+        }
+
+        public async void WriteTmd(string path)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                // write
+            });
+        }
+
+        public async void WriteTicket(string path)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                // write
+            });
         }
     }
 }

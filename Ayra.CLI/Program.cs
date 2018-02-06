@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Ayra.CLI
 {
@@ -15,6 +16,9 @@ namespace Ayra.CLI
     {
         private static async Task Main(string[] args)
         {
+            // Setup Ayra.Core logger
+            Ayra.Core.Logging.LogProvider.SetCurrentLogProvider(new ColoredConsoleLogProvider());
+
             Console.WriteLine($"Ayra.CLI v{Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine($"Ayra.Core v{Assembly.GetAssembly(typeof(TitleKeyDatabaseEntryBase)).GetName().Version}\n");
 
@@ -23,6 +27,7 @@ namespace Ayra.CLI
                 ( "Download N3DS game (TitleKeyDatabase)", CLI_N3DS_Download_TKDB ),
                 ( "Download Wii U game (TitleKeyDatabase)", CLI_WiiU_Download_TKDB ),
                 ( "Download N3DS/Wii U game by Title ID", CLI_3DS_WiU_Download_TitleId),
+                ( "Decrypt Wii U game", CLI_WiiU_Decrypt)
             };
 
             Console.WriteLine("Menu:");
@@ -70,17 +75,17 @@ namespace Ayra.CLI
             Console.Write("Make CIA? [y/n]: ");
             bool makeCia = CLI_GetConfirmation(true);
 
-            Console.Write("Downloading game, this might take a while...");
+            Console.WriteLine("Downloading game, this might take a while...");
             var game = await Core.Models.CTR.Game.GetFromNus(selectedGame.TitleId);
             // byte[] ticketData = await selectedGame.DownloadTicket();
             // game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
             NUSClientN3DS client = new NUSClientN3DS();
-            await client.DownloadTitle(game.Tmd, "download");
-            Console.WriteLine(" Done!");
+            await client.DownloadTitle(game.Tmd, game.LocalPath);
+            Console.WriteLine("Downloading completed!");
 
             if (makeCia)
-                MakeCdnCia.MakeCia(game.Tmd, game.Ticket, "download", "game.cia");
+                MakeCdnCia.MakeCia(game.Tmd, game.Ticket, game.LocalPath, "game.cia");
         }
 
         #endregion Nintendo 3DS
@@ -110,18 +115,68 @@ namespace Ayra.CLI
             Console.Write("Decrypt contents? [y/n]: ");
             bool decryptContents = CLI_GetConfirmation(true);
 
-            Console.Write("Downloading game, this might take a while...");
+            Console.WriteLine("Downloading game, this might take a while...");
             var game = await Core.Models.WUP.Game.GetFromNus(selectedGame.TitleId);
             byte[] ticketData = await selectedGame.DownloadTicket();
             game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
             // Download game
             NUSClientWiiU client = new NUSClientWiiU();
-            await client.DownloadTitle(game.Tmd, "download");
-            Console.WriteLine(" Done!");
+            await client.DownloadTitleParallel(game.Tmd, game.LocalPath);
+            Console.WriteLine("Downloading completed!");
 
             if (decryptContents)
-                CDecrypt.DecryptContents(game.Tmd, game.Ticket, "download");
+                CDecrypt.DecryptContents(game.Tmd, game.Ticket, game.LocalPath);
+        }
+
+        private static async Task CLI_WiiU_Decrypt()
+        {
+            string path = "";
+            while (true)
+            {
+                Console.Write("Enter path to CDN contents: ");
+                path = Console.ReadLine();
+
+                if (Directory.Exists(path)) break;
+                else Console.WriteLine("Invalid path!");
+            }
+
+            bool isMissingFiles = false;
+            string[] requiredFiles = new[] { "tmd", "cetk" };
+
+            do
+            {
+                foreach (string file in requiredFiles)
+                {
+                    if (!File.Exists(Path.Combine(path, file)))
+                    {
+                        isMissingFiles = true;
+                        Console.WriteLine($"Missing {file}!");
+                    }
+                }
+
+                if (isMissingFiles)
+                {
+                    Console.Write("Try to download the missing files? [y/n]: ");
+                    if (CLI_GetConfirmation())
+                    {
+                        CDecrypt.DownloadMissingFiles(path);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Can't continue without the required files!");
+                        return;
+                    }
+                }
+            } while (isMissingFiles);
+
+            byte[] data = await File.ReadAllBytesAsync(Path.Combine(path, "tmd"));
+            var tmd = Core.Models.WUP.TMD.Load(data);
+
+            data = await File.ReadAllBytesAsync(Path.Combine(path, "cetk"));
+            var ticket = Core.Models.WUP.Ticket.Load(data);
+
+            CDecrypt.DecryptContents(tmd, ticket, path);
         }
 
         #endregion Nintendo Wii U
@@ -198,7 +253,7 @@ namespace Ayra.CLI
         ///
         /// </summary>
         /// <param name="requireValidAnswer">Require either y, yes, n or no as answer. If false then return false on invalid answer.</param>
-        /// <returns></returns>
+        /// <returns>True if user entered y or yes</returns>
         private static bool CLI_GetConfirmation(bool requireValidAnswer = false)
         {
             while (true)

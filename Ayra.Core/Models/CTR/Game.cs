@@ -8,10 +8,14 @@ namespace Ayra.Core.Models.CTR
     {
         public TMD Tmd;
         public Ticket Ticket;
-        //public FST Fst;
 
         public string LocalPath;
 
+        /// <summary>
+        /// Download TMD from NUS and create a new game model
+        /// </summary>
+        /// <returns>New game model</returns>
+        /// <param name="titleId"></param>
         public async static Task<Game> GetFromNus(string titleId)
         {
             NUSClientN3DS client = new NUSClientN3DS();

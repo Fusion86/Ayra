@@ -153,7 +153,7 @@ namespace Ayra.Core.Models.WUP
                         throw new Exception("Level error");
                     }
 
-                    Logger.Info($"Found directory '{fileNames[i]}' at level {level}");
+                    Logger.Debug($"Found directory '{fileNames[i]}' at level {level}");
                 }
 
                 string path = "";
@@ -167,7 +167,7 @@ namespace Ayra.Core.Models.WUP
                 fst.FilePaths[i] = path;
 
                 string type = fst.Entries[i].IsDirectory ? "directory" : "file";
-                Logger.Info($"[FST] Found {type} '{path}'");
+                Logger.Debug($"Found {type} '{path}'");
             }
 
             #endregion Build file paths

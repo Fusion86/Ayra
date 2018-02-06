@@ -4,8 +4,11 @@ using Ayra.Core.Data;
 using Ayra.Core.Logging;
 using Ayra.Core.Models.WUP;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Ayra.Core.Helpers.WUP
 {
@@ -81,10 +84,35 @@ namespace Ayra.Core.Helpers.WUP
                 cs.Read(decryptedContent, 0, encryptedContent.Length);
             }
 
-            //if (Debugger.IsAttached) File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
+            Task.Factory.StartNew(() =>
+            {
+                File.WriteAllBytes(Path.Combine(path, cntName + ".dec"), decryptedContent);
+            });
 
             FST fst = FST.Load(decryptedContent);
             int num = fst.Entries[0].NameOffset;
+        }
+
+        public static string GetTitleIdForContent(string path)
+        {
+            // Idk if this is even possible
+            throw new NotImplementedException();
+        }
+
+        public static void DownloadMissingFiles(string path)
+        {
+            Lazy<string> titleId = new Lazy<string>(() => GetTitleIdForContent("download/00something"));
+            IEnumerable<string> files = new DirectoryInfo(path).GetFiles().Select(x => x.Name);
+
+            if (!files.Contains("tmd"))
+            {
+                // Download
+            }
+
+            if (!files.Contains("cetk"))
+            {
+                // Download
+            }
         }
     }
 }

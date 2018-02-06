@@ -3,6 +3,7 @@ using Ayra.Core.Logging;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Ayra.Core.Classes
 {
@@ -77,13 +78,16 @@ namespace Ayra.Core.Classes
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
         /// <param name="i">Content index</param>
-        public async Task DownloadContent(dynamic tmd, string outDir, int i)
+        public async Task DownloadContent(dynamic tmd, string outDir, int i, Action<dynamic, string, int> onCompleted = null)
         {
             NUSWebClient client = GetNewNUSWebClient();
             Logger.Info($"Downloading {i + 1}/{tmd.Header.ContentCount} {Utility.GetSizeString((long)tmd.Contents[i].Size)}");
             string titleId = tmd.Header.TitleId.ToString("X16");
             string url = nusBaseUrl + titleId + "/" + tmd.Contents[i].ContentId.ToString("X8");
             await client.DownloadFileTaskAsync(url, Path.Combine(outDir, tmd.Contents[i].ContentId.ToString("X8")));
+
+            // TODO: See https://github.com/Fusion86/Ayra/issues/5
+            if (onCompleted != null) onCompleted(tmd, outDir, i);
         }
 
         /// <summary>
@@ -103,19 +107,29 @@ namespace Ayra.Core.Classes
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
         /// <returns></returns>
-        public async Task DownloadTitleParallel(dynamic tmd, string outDir, int maxConcurrent = 4)
+        public async Task DownloadTitleParallel(dynamic tmd, string outDir, int maxConcurrent = 8)
         {
-            throw new NotSupportedException();
+            if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
 
-            //List<Task> tasks = new List<Task>();
-            //for (int i = 0; i < tmd.Header.ContentCount; i++)
-            //{
-            //    int wtf = i; // TODO: If we don't do this then I __assume__ it'll pass the value of i at the end of this for loop, aka tmd.Header.NumContents
-            //    tasks.Add(new Task(async () => await DownloadContent(tmd, outDir, wtf)));
-            //}
+            Action<dynamic, string, int> onCompleted = new Action<dynamic, string, int>((_, __, i) =>
+                {
+                    Logger.Info($"Downloaded content number {i + 1}");
+                });
 
-            //// FIXME: Doesn't wait
-            //await Tasks.StartAndWaitAllThrottledAsync(tasks, maxConcurrent);
+            List<Task> tasks = new List<Task>();
+            for (int i = 0; i < tmd.Header.ContentCount; i++)
+            {
+                var task = DownloadContent(tmd, outDir, i, onCompleted);
+                tasks.Add(task);
+
+                if (tasks.Count == maxConcurrent)
+                {
+                    var completed = await Task.WhenAny(tasks);
+                    tasks.Remove(completed);
+                }
+            }
+
+            await Task.WhenAll(tasks);
         }
 
         //public abstract Task DownloadTitle(dynamic tmd, string outDir);
