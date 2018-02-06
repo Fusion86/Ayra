@@ -7,7 +7,8 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Ayra.CLI/Ayra.CLI.csproj"
+                "${workspaceFolder}/Ayra.CLI/Ayra.CLI.csproj",
+                "--no-restore"
             ]
         }
     ]
