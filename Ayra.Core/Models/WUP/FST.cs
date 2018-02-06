@@ -39,6 +39,8 @@ namespace Ayra.Core.Models.WUP
         protected _FST_FDInfo native;
 
         public bool IsDirectory => Convert.ToBoolean(native.Type & 1);
+        public ushort Flags => native.Flags;
+        public ushort StorageClusterIndex => native.StorageClusterIndex; // ContentId
 
         public int NameOffset
         {

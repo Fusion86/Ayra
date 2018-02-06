@@ -91,6 +91,12 @@ namespace Ayra.Core.Helpers.WUP
 
             FST fst = FST.Load(decryptedContent);
             int num = fst.Entries[0].NameOffset;
+
+            foreach(FST_FDInfoBase entry in fst.Entries.Where(x => !x.IsDirectory))
+            {
+                UInt32 fileId = tmd.Contents[entry.StorageClusterIndex].ContentId;
+                string fileName = fileId.ToString("X08");
+            }
         }
 
         public static string GetTitleIdForContent(string path)
