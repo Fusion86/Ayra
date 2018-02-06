@@ -5,7 +5,7 @@ namespace Ayra.Core.Enums
 {
     public class NSoftwarePlatform : Enumeration
     {
-        public static readonly NSoftwarePlatform N3DS = new NSoftwarePlatform(new byte[] { 0x00, 0x04 }, "Unknown");
+        public static readonly NSoftwarePlatform N3DS = new NSoftwarePlatform(new byte[] { 0x00, 0x04 }, "Nintendo 3DS");
         public static readonly NSoftwarePlatform WiiU = new NSoftwarePlatform(new byte[] { 0x00, 0x05 }, "Nintendo Wii U");
 
         public static readonly NSoftwarePlatform Unknown = new NSoftwarePlatform(null, "Unknown");
