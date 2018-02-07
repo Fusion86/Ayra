@@ -90,12 +90,38 @@ namespace Ayra.Core.Helpers.WUP
             });
 
             FST fst = FST.Load(decryptedContent);
-            int num = fst.Entries[0].NameOffset;
 
-            foreach(FST_FDInfoBase entry in fst.Entries.Where(x => !x.IsDirectory))
+            // Extract
+            // Wip stuff, I still don't even know how the original function works
+            for (int i = 0; i < fst.Entries.Length; i++)
             {
-                UInt32 fileId = tmd.Contents[entry.StorageClusterIndex].ContentId;
-                string fileName = fileId.ToString("X08");
+                const int BLOCK_SIZE = 0x8000;
+
+                // TODO: Maybe `typeof(entry) == FST_FileInfo` is faster?
+                FST_FileInfo entry = fst.Entries[i] as FST_FileInfo;
+                if (entry == null) continue;
+                if (Convert.ToBoolean(entry.Flags & 0x80)) continue;
+
+                UInt32 contentId = tmd.Contents[entry.StorageClusterIndex].ContentId;
+                string contentName = contentId.ToString("X08");
+                string contentPath = Path.Combine(path, contentName);
+                string outName = fst.FilePaths[i]; // Relative path (as seen from the archive root)
+                string outPath = Path.Combine(path, outName);
+
+                int blockNr = (int)(entry.FileOffset / (uint)BLOCK_SIZE);
+
+                UInt64 realOffset = entry.FileOffset / BLOCK_SIZE * BLOCK_SIZE;
+                UInt64 soffset = entry.FileOffset - realOffset; // What is this?
+
+                Array.Clear(aes.IV, 0, aes.IV.Length);
+                aes.IV[1] = (byte)entry.StorageClusterIndex;
+                // aes.Key is unchanged, but still holds the old (needed) value
+
+                using (FileStream contentStream = new FileStream(contentPath, FileMode.Open))
+                using (FileStream outStream = new FileStream(outPath, FileMode.Create))
+                {
+                    // cdecrypt-2 Size = entry.FileSize
+                }
             }
         }
 

@@ -2,6 +2,7 @@
 using Ayra.Core.Logging;
 using Ayra.Core.Structs.WUP;
 using System;
+using System.IO;
 
 namespace Ayra.Core.Models.WUP
 {
@@ -39,6 +40,8 @@ namespace Ayra.Core.Models.WUP
         protected _FST_FDInfo native;
 
         public bool IsDirectory => Convert.ToBoolean(native.Type & 1);
+
+        public byte Type => native.Type;
         public ushort Flags => native.Flags;
         public ushort StorageClusterIndex => native.StorageClusterIndex; // ContentId
 
@@ -162,7 +165,7 @@ namespace Ayra.Core.Models.WUP
                 for (int j = 0; j < level; j++)
                 {
                     int dirnameIndex = entry[j];
-                    path += fileNames[dirnameIndex] + "/";
+                    path += fileNames[dirnameIndex] + Path.DirectorySeparatorChar;
                 }
 
                 if (!fst.Entries[i].IsDirectory) path += fileNames[i];

@@ -62,7 +62,7 @@ namespace Ayra.Core.Structs.WUP
         public UInt32 Size; // FileLength or NextOffset
 
         [Endian(Endianness.BigEndian)]
-        public UInt16 Flags;
+        public UInt16 Flags; // FIXME: Might be incorrect
 
         [Endian(Endianness.BigEndian)]
         public UInt16 StorageClusterIndex; // Or maybe ContentId
