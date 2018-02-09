@@ -177,6 +177,9 @@ namespace Ayra.Core.Models.WUP
 
             #endregion Build file paths
 
+            Logger.Debug($"SecondaryHeaders: {fst.SecondaryHeaders.Length}"); // FSTInfo entries
+            Logger.Debug($"Entries: {fst.Entries.Length}"); // FST entries
+
             return fst;
         }
     }
