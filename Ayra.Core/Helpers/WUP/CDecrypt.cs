@@ -57,7 +57,6 @@ namespace Ayra.Core.Helpers.WUP
             byte[] iv = BitConverter.GetBytes(tmd.Header.TitleId);
             if (BitConverter.IsLittleEndian) Array.Reverse(iv);
             Array.Resize(ref iv, 16); // New space will have 0x00 as value
-
             aes.IV = iv;
 
             using (MemoryStream ms = new MemoryStream(encryptedTitleKey))
@@ -98,7 +97,7 @@ namespace Ayra.Core.Helpers.WUP
                 // TODO: Maybe `typeof(entry) == FST_FileInfo` is faster?
                 FST_FileInfo entry = fst.Entries[i] as FST_FileInfo;
                 if (entry == null) continue; // Skip directory entries
-                if (Convert.ToBoolean(entry.Flags & 0x80)) continue; // Skip ? entries
+                if (Convert.ToBoolean(entry.Type & 0x80)) continue; // Skip non-file entries
 
                 UInt32 contentId = tmd.Contents[entry.StorageClusterIndex].ContentId;
                 string contentName = contentId.ToString("X08");
@@ -113,14 +112,9 @@ namespace Ayra.Core.Helpers.WUP
                 else
                 {
                     // ExtractFile
-                    const int BLOCK_SIZE = 0x8000;
-
-                    int blockNr = (int)(entry.FileOffset / (uint)BLOCK_SIZE);
-                    UInt64 realOffset = entry.FileOffset / BLOCK_SIZE * BLOCK_SIZE;
-                    UInt64 soffset = entry.FileOffset - realOffset; // What is this?
-
-                    Array.Clear(aes.IV, 0, aes.IV.Length);
-                    aes.IV[1] = (byte)entry.StorageClusterIndex;
+                    Array.Clear(iv, 0, iv.Length);
+                    iv[1] = (byte)entry.StorageClusterIndex;
+                    aes.IV = iv;
                     // aes.Key is unchanged, but still holds the old (needed) value
 
                     string outDir = Path.GetDirectoryName(outPath);
