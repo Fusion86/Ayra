@@ -1,6 +1,7 @@
 ﻿// Based on https://github.com/crediar/cdecrypt/blob/master/main.cpp
 
 using Ayra.Core.Data;
+using Ayra.Core.Extensions;
 using Ayra.Core.Logging;
 using Ayra.Core.Models.WUP;
 using System;
@@ -9,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Ayra.Core.Extensions;
 
 namespace Ayra.Core.Helpers.WUP
 {
