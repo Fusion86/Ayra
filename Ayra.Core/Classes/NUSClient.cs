@@ -107,7 +107,7 @@ namespace Ayra.Core.Classes
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
         /// <returns></returns>
-        public async Task DownloadTitleParallel(dynamic tmd, string outDir, int maxConcurrent = 8)
+        public async Task DownloadTitleParallel(dynamic tmd, string outDir, int maxConcurrent = 4)
         {
             if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
 
