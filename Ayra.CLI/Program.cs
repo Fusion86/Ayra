@@ -1,5 +1,6 @@
 ﻿using Ayra.Core.Classes;
 using Ayra.Core.Enums;
+using Ayra.Core.Extensions;
 using Ayra.Core.Helpers.CTR;
 using Ayra.Core.Helpers.WUP;
 using Ayra.TitleKeyDatabase;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace Ayra.CLI
 {
@@ -45,7 +47,7 @@ namespace Ayra.CLI
                 ( "Download TitleKeys from that one site", CLI_TKDB_Download ),
             };
 
-        menu:
+            menu:
             Console.WriteLine("\nNintendo 3DS TitleKey count: " + titleKeyDatabase3ds.Entries.Count);
             Console.WriteLine("Nintendo Wii U TitleKey count: " + titleKeyDatabaseWiiU.Entries.Count);
 
@@ -124,27 +126,41 @@ namespace Ayra.CLI
             if (!selectedGame.HasTicket)
             {
                 Console.WriteLine("There is no ticket available for this title!");
-                return;
+                Console.WriteLine("This means that you won't be able to decrypt the game, unless you supply the ticket yourself.");
+                Console.Write("Continue? [y/n]: ");
+                if (CLI_GetConfirmation(true) == false) return;
             }
 
             Console.Write("Download game? [y/n]: ");
-            if (!CLI_GetConfirmation(true)) return;
-
-            Console.Write("Decrypt contents? [y/n]: ");
-            bool decryptContents = CLI_GetConfirmation(true);
+            if (CLI_GetConfirmation(true) == false) return;
 
             Console.WriteLine("Downloading game, this might take a while...");
             var game = await Core.Models.WUP.Game.GetFromNus(selectedGame.TitleId);
-            byte[] ticketData = await selectedGame.DownloadTicket();
-            game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
             // Download game
             NUSClientWiiU client = new NUSClientWiiU();
-            await client.DownloadTitleParallel(game.Tmd, game.LocalPath);
-            Console.WriteLine("Downloading completed!");
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
-            if (decryptContents)
-                CDecrypt.DecryptContents(game.Tmd, game.Ticket, game.LocalPath);
+            await client.DownloadTitleParallel(game.Tmd, game.LocalPath);
+
+            sw.Stop();
+            Console.WriteLine("Download completed in " + sw.Elapsed.ToReadableString());
+
+            if (selectedGame.HasTicket)
+            {
+                Console.Write("Decrypt contents? [y/n]: ");
+                if (CLI_GetConfirmation(true))
+                {
+                    Console.WriteLine("Downloading ticket...");
+                    byte[] ticketData = await selectedGame.DownloadTicket();
+                    game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
+
+
+                    Console.WriteLine("Decrypting game...");
+                    CDecrypt.DecryptContents(game.Tmd, game.Ticket, game.LocalPath);
+                }
+            }
         }
 
         private static async Task CLI_WiiU_Decrypt()
