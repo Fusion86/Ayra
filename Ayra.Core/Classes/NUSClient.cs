@@ -90,7 +90,7 @@ namespace Ayra.Core.Classes
 
             if (File.Exists(dest))
             {
-                Logger.Info($"'{dest}' already exists, verifying file");
+                Logger.Info($"{dest} already exists, verifying file");
                 if (new FileInfo(dest).Length == (long)tmd.Contents[i].Size)
                 {
                     Logger.Info("Filesize matches, skipping download.");
