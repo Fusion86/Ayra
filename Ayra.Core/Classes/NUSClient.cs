@@ -88,6 +88,27 @@ namespace Ayra.Core.Classes
             string url = nusBaseUrl + titleId + "/" + tmd.Contents[i].ContentId.ToString("X8");
             string dest = Path.Combine(outDir, tmd.Contents[i].ContentId.ToString("X8"));
 
+            if (File.Exists(dest))
+            {
+                Logger.Info($"'{dest}' already exists, verifying file");
+                if (new FileInfo(dest).Length == (long)tmd.Contents[i].Size)
+                {
+                    Logger.Info("Filesize matches, skipping download.");
+                    progress.Report(new DownloadContentProgress
+                    {
+                        ContentIndex = i,
+                        BytesReceived = 0,
+                        TotalBytesToReceive = (long)tmd.Contents[i].Size,
+                        Status = DownloadContentProgressStatus.AlreadyDownloaded,
+                    });
+                    return;
+                }
+                else
+                {
+                    Logger.Info("Filesize doesn't match, redownloading file.");
+                }
+            }
+
             if (progress != null)
             {
                 client.DownloadProgressChanged += (sender, e) =>
@@ -97,6 +118,7 @@ namespace Ayra.Core.Classes
                         ContentIndex = i,
                         BytesReceived = e.BytesReceived,
                         TotalBytesToReceive = (long)tmd.Contents[i].Size,
+                        Status = DownloadContentProgressStatus.Downloading,
                     });
                 };
             }
