@@ -4,6 +4,8 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net;
+using Ayra.Core.Structs;
 
 namespace Ayra.Core.Classes
 {
@@ -78,27 +80,39 @@ namespace Ayra.Core.Classes
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
         /// <param name="i">Content index</param>
-        public async Task DownloadContent(dynamic tmd, string outDir, int i, Action<dynamic, string, int> onCompleted = null)
+        public async Task DownloadContent(dynamic tmd, string outDir, int i, IProgress<DownloadContentProgress> progress = null)
         {
             NUSWebClient client = GetNewNUSWebClient();
             Logger.Info($"Downloading {i + 1}/{tmd.Header.ContentCount} {Utility.GetSizeString((long)tmd.Contents[i].Size)}");
             string titleId = tmd.Header.TitleId.ToString("X16");
             string url = nusBaseUrl + titleId + "/" + tmd.Contents[i].ContentId.ToString("X8");
-            await client.DownloadFileTaskAsync(url, Path.Combine(outDir, tmd.Contents[i].ContentId.ToString("X8")));
+            string dest = Path.Combine(outDir, tmd.Contents[i].ContentId.ToString("X8"));
 
-            // TODO: See https://github.com/Fusion86/Ayra/issues/5
-            if (onCompleted != null) onCompleted(tmd, outDir, i);
+            if (progress != null)
+            {
+                client.DownloadProgressChanged += (sender, e) =>
+                {
+                    progress.Report(new DownloadContentProgress
+                    {
+                        ContentIndex = i,
+                        BytesReceived = e.BytesReceived,
+                        TotalBytesToReceive = (long)tmd.Contents[i].Size,
+                    });
+                };
+            }
+
+            await client.DownloadFileTaskAsync(url, dest);
         }
 
         /// <summary>
         /// Download title to path, but now in parallel
         /// </summary>
         /// <param name="titleId"></param>
-        public async Task DownloadTitleParallel(string titleId, string path, int maxConcurrent = 4)
+        public async Task DownloadTitleParallel(string titleId, string path, IProgress<DownloadContentProgress> progress = null)
         {
             Logger.Info($"Downloading TMD for TitleID {titleId}");
             dynamic tmd = await DownloadTMD(titleId);
-            await DownloadTitleParallel(tmd, path, maxConcurrent);
+            await DownloadTitleParallel(tmd, path, progress);
         }
 
         /// <summary>
@@ -107,22 +121,17 @@ namespace Ayra.Core.Classes
         /// <param name="tmd"></param>
         /// <param name="outDir"></param>
         /// <returns></returns>
-        public async Task DownloadTitleParallel(dynamic tmd, string outDir, int maxConcurrent = 4)
+        public async Task DownloadTitleParallel(dynamic tmd, string outDir, IProgress<DownloadContentProgress> progress = null)
         {
             if (!Directory.Exists(outDir)) Directory.CreateDirectory(outDir);
-
-            Action<dynamic, string, int> onCompleted = new Action<dynamic, string, int>((_, __, i) =>
-                {
-                    Logger.Info($"Downloaded content number {i + 1}");
-                });
 
             List<Task> tasks = new List<Task>();
             for (int i = 0; i < tmd.Header.ContentCount; i++)
             {
-                var task = DownloadContent(tmd, outDir, i, onCompleted);
-                tasks.Add(task);
+                Task downloadContentTask = DownloadContent(tmd, outDir, i, progress);
+                tasks.Add(downloadContentTask);
 
-                if (tasks.Count == maxConcurrent)
+                if (tasks.Count == 4) // 4 = max concurrent downloads
                 {
                     var completed = await Task.WhenAny(tasks);
                     tasks.Remove(completed);
@@ -132,9 +141,11 @@ namespace Ayra.Core.Classes
             await Task.WhenAll(tasks);
         }
 
-        //public abstract Task DownloadTitle(dynamic tmd, string outDir);
-        //public abstract Task DownloadContent(dynamic tmd, string outDir, int i);
-
+        /// <summary>
+        /// This is either genius or cheating
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private dynamic LoadTMD(byte[] data)
         {
             var method = TMDType.GetMethod("Load");

@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 
 BenchmarkDotNet.Artifacts/
+/Ayra.CLI/TitleKeys3DS.json
+/Ayra.CLI/TitleKeyWiiU.json

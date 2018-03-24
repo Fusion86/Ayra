@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using Ayra.Core.Logging;
+
 namespace Ayra.CLI
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using Ayra.Core.Logging;
-
     public class ColoredConsoleLogProvider : ILogProvider
     {
         private static readonly Dictionary<LogLevel, ConsoleColor> Colors = new Dictionary<LogLevel, ConsoleColor>

@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
+using Ayra.Core.Structs;
+using Ayra.Core.Helpers;
 
 namespace Ayra.CLI
 {
@@ -142,7 +144,24 @@ namespace Ayra.CLI
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            await client.DownloadTitleParallel(game.Tmd, game.LocalPath);
+            long[] lastReportMs = new long[game.Tmd.Header.ContentCount];
+            Progress<DownloadContentProgress> progress = new Progress<DownloadContentProgress>();
+            progress.ProgressChanged += (s, e) =>
+            {
+                // Throttle reporting to once per second (per content).
+                if (lastReportMs[e.ContentIndex] + 1000 < sw.ElapsedMilliseconds)
+                {
+                    lastReportMs[e.ContentIndex] = sw.ElapsedMilliseconds;
+
+                    string str = (e.ContentIndex + 1) + "/" + game.Tmd.Header.ContentCount; // +1 because zero indexed
+                    str += " received: " + Utility.GetSizeString(e.BytesReceived) + " of " + Utility.GetSizeString(e.TotalBytesToReceive);
+                    str += "    " + (float)e.BytesReceived / e.TotalBytesToReceive * 100 + "%"; // Cast to float to make sure we don't ignore decimals
+
+                    Console.WriteLine(str);
+                }
+            };
+
+            await client.DownloadTitleParallel(game.Tmd, game.LocalPath, progress);
 
             sw.Stop();
             Console.WriteLine("Download completed in " + sw.Elapsed.ToReadableString());
