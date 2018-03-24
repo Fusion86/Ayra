@@ -1,4 +1,5 @@
 ﻿using Ayra.Core.Classes;
+using Ayra.Core.Helpers.WUP;
 using Ayra.Core.Models.WUP;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
