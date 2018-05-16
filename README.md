@@ -1,6 +1,6 @@
 # Ayra
 
-Open source Nintendo Update Server downloader and decryptor, or rather, that is what it is going to be when it is finished (probably never). I aim to make the full toolset 100% C#, this also includes recreating tools like cdecrypt.
+Open source Nintendo Update Server downloader and decryptor, or rather, that is what it is going to be when it is finished (probably never). This means that it only works for the Nintendo 3DS and Nintendo Wii U, and possibly for the Wii in the future. The Nintendo Switch will never be supported since it's so different. I aim to make the full toolset in C#, this also includes recreating tools like cdecrypt.
 
 
 ## Codenames
