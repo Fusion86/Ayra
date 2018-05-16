@@ -8,7 +8,6 @@ Open source Nintendo Update Server downloader and decryptor, or rather, that is 
 | Codename | Device          |
 |----------|-----------------|
 | CTR      | Nintendo 3DS    |
-| NX       | Nintendo Switch | 
 | WUP      | Nintendo Wii U  |
 
 
