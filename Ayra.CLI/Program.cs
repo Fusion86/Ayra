@@ -103,7 +103,7 @@ namespace Ayra.CLI
             // byte[] ticketData = await selectedGame.DownloadTicket();
             // game.Ticket = Core.Models.WUP.Ticket.Load(ticketData);
 
-            NUSClientN3DS client = new NUSClientN3DS();
+            NUSClientCTR client = new NUSClientCTR();
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -162,7 +162,7 @@ namespace Ayra.CLI
             var game = await Core.Models.WUP.Game.GetFromNus(selectedGame.TitleId);
 
             // Download game
-            NUSClientWiiU client = new NUSClientWiiU();
+            NUSClientWUP client = new NUSClientWUP();
             Stopwatch sw = new Stopwatch();
             sw.Start();
 

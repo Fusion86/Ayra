@@ -7,7 +7,6 @@ namespace Ayra.Core.Enums
     {
         public static readonly NSoftwarePlatform CTR = new NSoftwarePlatform(new byte[] { 0x00, 0x04 }, "Nintendo 3DS");
         public static readonly NSoftwarePlatform WUP = new NSoftwarePlatform(new byte[] { 0x00, 0x05 }, "Nintendo Wii U");
-        public static readonly NSoftwarePlatform NX = new NSoftwarePlatform(new byte [] { 0x01, 00 }, "Nintendo Switch");
 
         public NSoftwarePlatform() { }
         private NSoftwarePlatform(byte[] identifier, string name) : base(identifier, name) { }

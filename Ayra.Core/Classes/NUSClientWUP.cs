@@ -1,9 +1,9 @@
-﻿using Ayra.Core.Models.CTR;
+﻿using Ayra.Core.Models.WUP;
 using System;
 
 namespace Ayra.Core.Classes
 {
-    public class NUSClientN3DS : NUSClient
+    public class NUSClientWUP : NUSClient
     {
         protected override string nusBaseUrl => "http://ccs.cdn.wup.shop.nintendo.net/ccs/download/";
         protected override string nusUserAgent => "wii libnup/1.0";

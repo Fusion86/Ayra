@@ -36,11 +36,11 @@ namespace Ayra.Core.Helpers.WUP
             switch (tmd.Header.Issuer)
             {
                 case "Root-CA00000003-CP0000000b":
-                    aes.Key = KeyChain.WIIU_COMMON_KEY;
+                    aes.Key = KeyChain.WUP_COMMON_KEY;
                     break;
 
                 case "Root-CA00000004-CP00000010":
-                    aes.Key = KeyChain.WIIU_COMMON_DEV_KEY;
+                    aes.Key = KeyChain.WUP_COMMON_DEV_KEY;
                     break;
 
                 default: throw new NotSupportedException("Unknown Root type: " + tmd.Header.Issuer);

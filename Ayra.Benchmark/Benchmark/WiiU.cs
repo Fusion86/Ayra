@@ -18,7 +18,7 @@ namespace Ayra.Benchmark.Benchmark
         [GlobalSetup]
         public void Setup()
         {
-            NUSClientWiiU nus = new NUSClientWiiU();
+            NUSClientWUP nus = new NUSClientWUP();
             WebClient webClient = new WebClient();
 
             TMD tmd = nus.DownloadTMD(Config.TitleId, true, filePath).Result;

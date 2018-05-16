@@ -18,7 +18,7 @@ namespace Ayra.Core.Models.CTR
         /// <param name="titleId"></param>
         public async static Task<Game> GetFromNus(string titleId)
         {
-            NUSClientN3DS client = new NUSClientN3DS();
+            NUSClientCTR client = new NUSClientCTR();
             TMD tmd = await client.DownloadTMD(titleId);
 
             return new Game

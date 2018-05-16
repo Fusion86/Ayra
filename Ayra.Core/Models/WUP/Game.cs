@@ -20,7 +20,7 @@ namespace Ayra.Core.Models.WUP
         /// <param name="titleId"></param>
         public async static Task<Game> GetFromNus(string titleId)
         {
-            NUSClientWiiU client = new NUSClientWiiU();
+            NUSClientWUP client = new NUSClientWUP();
             TMD tmd = await client.DownloadTMD(titleId);
 
             return new Game
